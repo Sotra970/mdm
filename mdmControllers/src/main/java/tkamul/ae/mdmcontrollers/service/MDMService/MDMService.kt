@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.IBinder
 import dagger.hilt.android.AndroidEntryPoint
 import tkamul.ae.mdmcontrollers.contollers.MDMControllers
+import tkamul.ae.mdmcontrollers.data.gateways.socketModels.argsResponse.NameValuePairs
 import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.Args
 import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.DeviceInfo2SocketPayload
 import tkamul.ae.mdmcontrollers.data.gateways.socketgateway.SocketEventListener
@@ -16,6 +17,7 @@ import tkamul.ae.mdmcontrollers.domain.useCases.remote.MDMSocketChannelUseCase
 import javax.inject.Inject
 @AndroidEntryPoint
 class MDMService : Service() {
+//    $adb logcat | grep --invert-match 'notshownmatchpattern'
     private var startMode: Int = START_REDELIVER_INTENT // indicates how to behave if the service is killed
     private var allowRebind: Boolean = true   // indicates whether onRebind should be used
     private var mdmdBinderImplemnter : MDMBinderImplemnter =
@@ -29,7 +31,7 @@ class MDMService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        showNotification(Config.SericeNotification.MDM_NOTIFICATION_STOPPED_BODY)
+        showNotification(Config.SericeNotification.MDM_NOTIFICATION_ATTACHED_BODY)
         mdmControllers.invokeMDMInfo {
             startListingOnSocketEvents(it)
         }
@@ -40,25 +42,24 @@ class MDMService : Service() {
     private fun startListingOnSocketEvents(info: MDMInfo) {
         mdmSocketChannelUseCase.observe(info.deviceInfo.serial_number , object : SocketEventListener {
             override fun onConnect(args: Any) {
-                sendDeviceInfo(info)
+//                sendDeviceInfo(info, )
                 showNotification(Config.SericeNotification.MDM_NOTIFICATION_RUNNING_BODY)
             }
             override fun onDisconnect(vararg args: Any) {
-                showNotification(Config.SericeNotification.MDM_NOTIFICATION_STOPPED_BODY)
+                showNotification(Config.SericeNotification.MDM_NOTIFICATION_DISCONECTED_BODY)
             }
             override fun onNewMessage(vararg args: Any) {
                 mdmControllers.invokProcess(args.toArgsResponse())
-                showNotification(Config.SericeNotification.MDM_NOTIFICATION_RUNNING_BODY)
             }
         })
     }
 
-    private fun sendDeviceInfo(info : MDMInfo) {
+    private fun sendDeviceInfo(info: MDMInfo, pairs:NameValuePairs) {
         mdmSocketChannelUseCase.send(
             DeviceInfo2SocketPayload(
             event = Config.Events.ON_CONNECT ,
             device = info,
-            args = Args("internal")
+            args = Args(pairs.args.nameValuePairs.ray_id)
         ))
     }
 
@@ -79,7 +80,7 @@ class MDMService : Service() {
 
     override fun onDestroy() {
         // The service is no longer used and is being destroyed
-       showNotification(Config.SericeNotification.MDM_NOTIFICATION_STOPPED_BODY)
+       showNotification(Config.SericeNotification.MDM_NOTIFICATION_STOPED_BODY)
     }
 
 

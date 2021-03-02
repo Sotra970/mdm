@@ -21,6 +21,6 @@ class MDMSocketChannelUseCase @Inject constructor(
     }
     fun <P> send (payload : P , ack : Ack = Ack{}){
         val json = Gson().toJson(payload)
-        socket.sendMessage( Config.SET_DEVICE_INFO_SOCKET_CHANNEL ,payload , ack)
+        socket.sendMessage( Config.SET_DEVICE_INFO_SOCKET_CHANNEL ,json , ack)
     }
 }

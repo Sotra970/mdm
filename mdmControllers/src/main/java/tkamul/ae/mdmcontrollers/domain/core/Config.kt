@@ -25,9 +25,11 @@ object Config {
     }
 
     object SericeNotification {
+        val MDM_NOTIFICATION_ATTACHED_BODY: String="MDM Attached"
         const val MDM_NOTIFICATION_TITLE = "MDM Controller"
         const val MDM_NOTIFICATION_RUNNING_BODY = "MDM is running"
-        const val MDM_NOTIFICATION_STOPPED_BODY = "MDM has been stopped"
+        const val MDM_NOTIFICATION_STOPED_BODY = "MDM has been stopped"
+        const val MDM_NOTIFICATION_DISCONECTED_BODY = "MDM has been disconnected"
         const val MDM_NOTIFICATION_CHANNNEL_ID = "MDM_ID"
         const val MDM_NOTIFICATION_CHANNNEL_NAME = "MDM"
     }

@@ -13,7 +13,7 @@ object Logger {
     init {
         if (BuildConfig.DEBUG && Timber.treeCount()==0)
             Timber.plant(object : DebugTree() {
-                override fun createStackElementTag(element: StackTraceElement): String? {
+                override fun createStackElementTag(element: StackTraceElement): String {
                     return   element.className + ": " +  element.methodName + ": " + element.lineNumber
                 }
             })
@@ -21,7 +21,6 @@ object Logger {
     @JvmStatic
      inline fun logd(message : Any?){
         Timber.d(message?.toString()?:"null")
-        Log.d("socketcall" , message?.toString()?:"null")
     }
     @JvmStatic
     inline fun loge(e: Throwable?) {

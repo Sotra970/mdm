@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import com.mobiiot.androidqapi.api.Utils.PrinterServiceUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import tkamul.ae.mdmcontrollers.PrinterModule.TkamulPrinterFactory
@@ -31,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        PrinterServiceUtil.bindService(applicationContext)
 //        keyStoreUtils.addKeyStore()
         mdmControllers.mdmInfoController.invoke {
             connection.text = it.deviceInfo.serial_number
@@ -40,7 +42,7 @@ class MainActivity : AppCompatActivity() {
 
 
     fun wifion(view: View) {
-/*        TkamulPrinterFactory.getTkamulPrinter(baseContext)
+       TkamulPrinterFactory.getTkamulPrinter(this)
             .addText("hi")
             .addText("hi x2" , PrinterTextScale.large)
             .addText("hi x1" , PrinterTextScale.medium)
@@ -49,7 +51,7 @@ class MainActivity : AppCompatActivity() {
             .addText("hi LTR" , printerTextAlign = PrinterTextAlign.left)
             .addText("hi RTL" , printerTextAlign = PrinterTextAlign.right)
             .addText("hi center" , printerTextAlign = PrinterTextAlign.center)
-            .addAsterisksLine()*/
+            .addAsterisksLine()
 //            .printOnPaper()
         mdmControllers.invokProcess(event = Config.Events.WIFI_EVENT_ON )
     }

@@ -1,5 +1,6 @@
 package tkamul.ae.mdmcontrollers.PrinterModule
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.os.Build
 import tkamul.ae.mdmcontrollers.PrinterModule.core.LineUtils
@@ -28,9 +29,7 @@ abstract class TkamulPrinterBase {
     protected abstract fun PrintImageOnPaper(tkamulPrinterImageModel : TkamulPrinterImageModel)
     protected abstract fun endingPrinterChild()
 
-    init {
-        setup()
-    }
+
 
     fun  addText(text: String, scale: PrinterTextScale = PrinterTextScale.normal, printerTextAlign: PrinterTextAlign = PrinterTextAlign.left):TkamulPrinterBase{
       for ( child in LineUtils.convertTextToLine(text,getMaxCharCountInLine())){
@@ -76,6 +75,7 @@ abstract class TkamulPrinterBase {
 
     @Throws(RuntimeException::class)
     fun printOnPaper(){
+        setup()
         if (getPrinterStatus().isReady){
             // builder to loog queue text
             var logLines =StringBuilder()

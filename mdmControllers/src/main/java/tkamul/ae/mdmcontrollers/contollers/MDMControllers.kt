@@ -145,7 +145,7 @@ class MDMControllers  @Inject constructor(
             Thread.sleep(5*1000)
             mdmInfoController.invoke {
                 mdmSocketChannelController.send(DeviceInfo2SocketPayload(
-                    event = pairs.event ,
+                        event = Config.Events.ON_CONNECT ,
                     device = it,
                     args = Args(pairs.args.nameValuePairs.ray_id)
                 ))
