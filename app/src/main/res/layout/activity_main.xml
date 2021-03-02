@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <ScrollView
+        android:id="@+id/connectionHolder"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/wifi_holder"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <TextView
+            android:id="@+id/connection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="18dp"
+            android:text="Hello World!"
+            android:textSize="24dp" />
+    </ScrollView>
+
+
+
+    <!--    wifi-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/wifi_holder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/wifi_on"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="wifion"
+            android:text="wifi on"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/wifi_off"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/wifi_off"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="wifionOff"
+            android:text="wifi off"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/wifi_on"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!--data-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/data_holder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/bluetooth_holder"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/wifi_holder"
+        app:layout_constraintVertical_chainStyle="spread">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/data_on"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="dataon"
+            android:text="data on"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/data_off"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/data_off"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="dataoff"
+            android:text="data off"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/data_on"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!--bluetooth-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bluetooth_holder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/nfc_holder"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/data_holder"
+        app:layout_constraintVertical_chainStyle="spread">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/bluetooth_on"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="bluetoothon"
+            android:text="bluetooth on"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/bluetooth_off"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/bluetooth_off"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="bluetoothOff"
+            android:text="bluetooth off"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/bluetooth_on"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <!--nfc-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/nfc_holder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/location_holder"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bluetooth_holder"
+        app:layout_constraintVertical_chainStyle="spread">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/nfc_on"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="nfcon"
+            android:text="nfc on"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/nfc_off"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/nfc_off"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="nfcOff"
+            android:text="nfc off"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/nfc_on"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+<!--    location-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/location_holder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/multi_holder"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nfc_holder"
+        app:layout_constraintVertical_chainStyle="spread">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/locationon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="locationon"
+            android:text="location on"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/locationoff"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/locationoff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="locationoff"
+            android:text="location off"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/locationon"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!--    reboot-->
+    <!--    poweroff-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/multi_holder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/location_holder"
+        app:layout_constraintVertical_chainStyle="spread">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/reboot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="reboot"
+            android:text="reboot"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/poweroff"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/poweroff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="poweroff"
+            android:text="power off"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/reboot"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
