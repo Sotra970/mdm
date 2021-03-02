@@ -18,11 +18,13 @@ import tkamul.ae.mdmcontrollers.domain.core.Logger
 /**
  * Created by sotra@altakamul.tr on 3/2/2021.
  */
-class CSTkamulPrinter(val context: Context) : TkamulPrinterBase() {
+class CSTkamulPrinter( val context: Context) : TkamulPrinterBase() {
+
 
     override fun setup() {
-        ServiceUtil.bindRemoteService(context)
         PrinterServiceUtil.bindService(context)
+//        ServiceUtil.bindRemoteService(context)
+
     }
 
     override fun getPrinterStatus(): PrinterStatus {
