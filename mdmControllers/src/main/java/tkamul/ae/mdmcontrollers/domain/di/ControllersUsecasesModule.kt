@@ -6,7 +6,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import tkamul.ae.mdmcontrollers.domain.useCases.PrintUseCase
+import tkamul.ae.mdmcontrollers.domain.useCases.hardwareControllers.PrintUseCase
 import tkamul.ae.mdmcontrollers.domain.useCases.hardwareControllers.*
 import tkamul.ae.mdmcontrollers.domain.useCases.hardwareControllers.core.KeyStoreUtils
 import tkamul.ae.mdmcontrollers.service.MobiMediaTechServiceUtil
@@ -84,10 +84,12 @@ class ControllersUsecasesModule {
     @Singleton
     fun provideMDMInfoController(
         @ApplicationContext appContext: Context ,
-        mobiMediaTechServiceUtil: MobiMediaTechServiceUtil
+        mobiMediaTechServiceUtil: MobiMediaTechServiceUtil,
+        printUseCase: PrintUseCase
     ): MDMInfoUseCase {
         return MDMInfoUseCase(
             mobiMediaTechServiceUtil,
+            printUseCase,
             appContext
         )
     }

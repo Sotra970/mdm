@@ -1,10 +1,11 @@
 package tkamul.ae.mdmcontrollers.contollers
+import tkamul.ae.mdmcontrollers.PrinterModule.models.config.LinePrintingStatus
 import tkamul.ae.mdmcontrollers.data.gateways.socketModels.argsResponse.NameValuePairs
 import tkamul.ae.mdmcontrollers.data.gateways.socketModels.argsResponse.NameValuePairsX
 import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.Args
 import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.DeviceInfo2SocketPayload
 import tkamul.ae.mdmcontrollers.domain.core.Config
-import tkamul.ae.mdmcontrollers.domain.useCases.PrintUseCase
+import tkamul.ae.mdmcontrollers.domain.useCases.hardwareControllers.PrintUseCase
 import tkamul.ae.mdmcontrollers.domain.useCases.hardwareControllers.*
 import tkamul.ae.mdmcontrollers.domain.useCases.remote.MDMSocketChannelUseCase
 import javax.inject.Inject
@@ -107,7 +108,8 @@ MDMControllers  @Inject constructor(
      * invoke print use case
      */
     private fun invokePrint(pairs: NameValuePairs) {
-        printController.invoke(pairs.args.nameValuePairs.text?:"null")
+        val lastLineStatus = printController.invoke(pairs.args.nameValuePairs.text?:"null")
+        setPrintStatusToSocket(pairs , lastLineStatus)
     }
 
     /**
@@ -115,7 +117,7 @@ MDMControllers  @Inject constructor(
       */
     private fun invokeLocation(enable: Boolean, pairs: NameValuePairs) {
         locationController.invoke(enable){
-            sendStatusToSETDeviceINFO(pairs)
+            sendStatusToSocket(pairs)
         }
     }
 
@@ -124,7 +126,7 @@ MDMControllers  @Inject constructor(
      */
     private fun invokeNFC(enable: Boolean, pairs: NameValuePairs) {
         nfcController.invoke(enable){
-            sendStatusToSETDeviceINFO(pairs)
+            sendStatusToSocket(pairs)
         }
     }
 
@@ -133,7 +135,7 @@ MDMControllers  @Inject constructor(
      */
     private fun invokeBluetooth(enable: Boolean, pairs: NameValuePairs) {
         bluetoothController.invoke(enable){
-            sendStatusToSETDeviceINFO(pairs)
+            sendStatusToSocket(pairs)
         }
     }
 
@@ -142,7 +144,7 @@ MDMControllers  @Inject constructor(
      */
     private fun invokedata(enable: Boolean, pairs: NameValuePairs) {
         mobileDataController.invoke(enable){
-            sendStatusToSETDeviceINFO(pairs)
+            sendStatusToSocket(pairs)
         }
     }
 
@@ -152,14 +154,14 @@ MDMControllers  @Inject constructor(
      */
     fun invokeWifi(enable: Boolean, pairs: NameValuePairs){
         wifiController.invoke(enable) {
-            sendStatusToSETDeviceINFO(pairs)
+            sendStatusToSocket(pairs)
         }
      }
 
     /**
      * function to send all controls status + device info
      */
-    private fun sendStatusToSETDeviceINFO(pairs: NameValuePairs) {
+    private fun sendStatusToSocket(pairs: NameValuePairs) {
         thread {
             // sleep 5 sec to wait controllers status to be ready
             // ex : wait wifi until have a status of (enable/disable) not (enabling/disabling )
@@ -168,6 +170,28 @@ MDMControllers  @Inject constructor(
             mdmInfoController.invoke {
                 mdmSocketChannelController.send(DeviceInfo2SocketPayload(
                         event = Config.Events.ON_CONNECT ,
+                    device = it,
+                    args = Args(pairs.args.nameValuePairs.ray_id)
+                ))
+            }
+        }
+    }
+
+    /**
+     * function to send  controls status + device info + print status  to responsible Socket channel
+     */
+    private fun setPrintStatusToSocket(pairs: NameValuePairs, lastLineStatus: LinePrintingStatus) {
+        thread {
+            // sleep 5 sec to wait controllers status to be ready
+            // ex : wait wifi until have a status of (enable/disable) not (enabling/disabling )
+            //      then send mobile info
+            Thread.sleep(5*1000)
+            mdmInfoController.invoke {
+                it.apply {
+                    this.lastLineStatus = lastLineStatus
+                }
+                mdmSocketChannelController.send(DeviceInfo2SocketPayload(
+                    event = Config.Events.ON_CONNECT ,
                     device = it,
                     args = Args(pairs.args.nameValuePairs.ray_id)
                 ))

@@ -1,8 +1,9 @@
 package tkamul.ae.mdmcontrollers.PrinterModule
 
+import com.mobiiot.androidqapi.api.Utils.Line
 import com.nbbse.mobiprint3.Printer
-import tkamul.ae.mdmcontrollers.PrinterModule.core.LineUtils
-import tkamul.ae.mdmcontrollers.PrinterModule.models.config.PrinterStatus
+import tkamul.ae.mdmcontrollers.PrinterModule.models.config.DevicePrinterStatus
+import tkamul.ae.mdmcontrollers.PrinterModule.models.config.LinePrintingStatus
 import tkamul.ae.mdmcontrollers.PrinterModule.models.data.TkamulPrinterImageModel
 import tkamul.ae.mdmcontrollers.PrinterModule.models.data.TkamulPrinterTextModel
 import tkamul.ae.mdmcontrollers.PrinterModule.models.textFormat.PrintTextDirction
@@ -26,10 +27,27 @@ class MobiWireTkamulPrinter : TkamulPrinterBase() {
        }
     }
 
-    override fun PrintTextOnPaper(tkamulPrinterTextModel: TkamulPrinterTextModel) {
-        mobiWirePrinter.printText(tkamulPrinterTextModel.text , getTextSize(tkamulPrinterTextModel.scale) ,getR2LFLAG(tkamulPrinterTextModel.dirction))
+    override fun PrintTextOnPaper(tkamulPrinterTextModel: TkamulPrinterTextModel) : LinePrintingStatus{
+        val isPrinted  = mobiWirePrinter.printText(tkamulPrinterTextModel.text , getTextSize(tkamulPrinterTextModel.scale) ,getR2LFLAG(tkamulPrinterTextModel.dirction))
+        return  getLastLinePrintingStatus()
     }
 
+    /**
+     * unfotuntly we cant get last printed line status like CSPrinter
+     * but we can save time and parent class logic with checking with device printer status instadeof returning always true and the printer have an issue
+     */
+    private fun getLastLinePrintingStatus(): LinePrintingStatus {
+        val status = getPrinterStatus()
+        if (status.isReady){
+            return LinePrintingStatus(true , null)
+        }else {
+            return LinePrintingStatus(false , status.status)
+        }
+    }
+
+    /**
+     * get desired printing text direction
+     */
     private fun getR2LFLAG(dirction: PrintTextDirction): Boolean {
         return when(dirction){
             PrintTextDirction.LTR->false
@@ -37,40 +55,56 @@ class MobiWireTkamulPrinter : TkamulPrinterBase() {
         }
     }
 
-    override fun PrintImageOnPaper(tkamulPrinterImageModel: TkamulPrinterImageModel) {
+
+    /**
+     *  {@inheritDoc}
+     */
+    override fun PrintImageOnPaper(tkamulPrinterImageModel: TkamulPrinterImageModel) : LinePrintingStatus{
         if (tkamulPrinterImageModel.path != null)
             mobiWirePrinter.printBitmap(tkamulPrinterImageModel.path)
         else if (tkamulPrinterImageModel.bitmap != null)
             mobiWirePrinter.printBitmap(
                 tkamulPrinterImageModel.bitmap
         )
+        return getLastLinePrintingStatus()
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     override fun endingPrinterChild() {
         mobiWirePrinter.printEndLine()
     }
 
-    override fun getPrinterStatus(): PrinterStatus {
+
+    /**
+     *  {@inheritDoc}
+     * get mobiewire printer status for mp3 device type
+     */
+    override fun getPrinterStatus(): DevicePrinterStatus {
         return when (mobiWirePrinter.printerStatus) {
             Printer.PRINTER_STATUS_NO_PAPER -> {
-                PrinterStatus("no paper ", false)
+                DevicePrinterStatus("no paper ", false)
             }
             Printer.PRINTER_STATUS_OVER_HEAT -> {
-                PrinterStatus("over heat ", false)
+                DevicePrinterStatus("over heat ", false)
             }
             Printer.PRINTER_STATUS_GET_FAILED -> {
-                PrinterStatus("print fail", false)
+                DevicePrinterStatus("print fail", false)
             }
             Printer.PRINTER_STATUS_OK -> {
-                PrinterStatus("ready", true)
+                DevicePrinterStatus("ready", true)
             }
-            else ->  PrinterStatus("unKnown", false)
+            else ->  DevicePrinterStatus("unKnown", false)
         }
     }
 
 
 
 
+    /**
+     * @inheritDoc
+     */
     override fun getMaxCharCountInLine(): Int {
         return  MAX_CHAR_COUNT
     }
