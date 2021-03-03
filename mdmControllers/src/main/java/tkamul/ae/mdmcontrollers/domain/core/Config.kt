@@ -53,6 +53,7 @@ object Config {
         const val POWERR_OFF_EVENT = "power-off"
         const val LOCATION_EVENT_ON = "location-on"
         const val LOCATION_EVENT_OFF = "location-off"
+        const val PRINT_EVENT = "print"
     }
 
 

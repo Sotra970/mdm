@@ -5,7 +5,7 @@ import tkamul.ae.mdmcontrollers.PrinterModule.core.LineUtils
 import tkamul.ae.mdmcontrollers.PrinterModule.models.config.PrinterStatus
 import tkamul.ae.mdmcontrollers.PrinterModule.models.data.TkamulPrinterImageModel
 import tkamul.ae.mdmcontrollers.PrinterModule.models.data.TkamulPrinterTextModel
-import tkamul.ae.mdmcontrollers.PrinterModule.models.textFormat.PrinterTextAlign
+import tkamul.ae.mdmcontrollers.PrinterModule.models.textFormat.PrintTextDirction
 import tkamul.ae.mdmcontrollers.PrinterModule.models.textFormat.PrinterTextScale
 
 /**
@@ -18,7 +18,7 @@ class MobiWireTkamulPrinter : TkamulPrinterBase() {
     override fun setup() {
         mobiWirePrinter = Printer.getInstance()
     }
-    override fun getTextSize(scale : PrinterTextScale): Int {
+     fun getTextSize(scale : PrinterTextScale): Int {
        return when(scale){
             PrinterTextScale.large->  LARGE_TEXT
             PrinterTextScale.medium ->  MED_TEXT
@@ -27,16 +27,13 @@ class MobiWireTkamulPrinter : TkamulPrinterBase() {
     }
 
     override fun PrintTextOnPaper(tkamulPrinterTextModel: TkamulPrinterTextModel) {
-        when(tkamulPrinterTextModel.align){
-            PrinterTextAlign.left ->{
-                mobiWirePrinter.printText(tkamulPrinterTextModel.text , getTextSize(tkamulPrinterTextModel.scale))
-            }
-            PrinterTextAlign.right ->{
-                mobiWirePrinter.printText(tkamulPrinterTextModel.text , getTextSize(tkamulPrinterTextModel.scale) ,true)
-            }
-            PrinterTextAlign.center ->{
-                mobiWirePrinter.printText(LineUtils.getCenterdLine(tkamulPrinterTextModel.text, getMaxCharCountInLine()) , getTextSize(tkamulPrinterTextModel.scale))
-            }
+        mobiWirePrinter.printText(tkamulPrinterTextModel.text , getTextSize(tkamulPrinterTextModel.scale) ,getR2LFLAG(tkamulPrinterTextModel.dirction))
+    }
+
+    private fun getR2LFLAG(dirction: PrintTextDirction): Boolean {
+        return when(dirction){
+            PrintTextDirction.LTR->false
+            PrintTextDirction.RTL->true
         }
     }
 
@@ -84,7 +81,7 @@ class MobiWireTkamulPrinter : TkamulPrinterBase() {
         internal const val LARGE_TEXT = 2
         internal const val MED_TEXT = 1
         internal const val NORMAL_TEXT = 1
-        internal const val MAX_CHAR_COUNT: Int = 31
+        internal const val MAX_CHAR_COUNT: Int = 21
         internal const val EMPTY_LINE: String = "\n"
     }
 }

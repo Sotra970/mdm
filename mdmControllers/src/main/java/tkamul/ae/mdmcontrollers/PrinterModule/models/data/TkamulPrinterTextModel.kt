@@ -1,6 +1,7 @@
 package tkamul.ae.mdmcontrollers.PrinterModule.models.data
 
-import tkamul.ae.mdmcontrollers.PrinterModule.models.textFormat.PrinterTextAlign
+import tkamul.ae.mdmcontrollers.PrinterModule.models.textFormat.PrintTextAlign
+import tkamul.ae.mdmcontrollers.PrinterModule.models.textFormat.PrintTextDirction
 import tkamul.ae.mdmcontrollers.PrinterModule.models.textFormat.PrinterTextScale
 
 /**
@@ -9,5 +10,6 @@ import tkamul.ae.mdmcontrollers.PrinterModule.models.textFormat.PrinterTextScale
 class TkamulPrinterTextModel(
     var text: String = "",
     var scale: PrinterTextScale = PrinterTextScale.normal,
-    var align: PrinterTextAlign = PrinterTextAlign.left
+    var align: PrintTextAlign = PrintTextAlign.LEFT,
+    var dirction: PrintTextDirction = PrintTextDirction.LTR
 ): TkamulPrintingData()

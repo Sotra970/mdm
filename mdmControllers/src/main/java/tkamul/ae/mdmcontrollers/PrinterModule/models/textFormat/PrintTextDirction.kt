@@ -3,6 +3,6 @@ package tkamul.ae.mdmcontrollers.PrinterModule.models.textFormat
 /**
  * Created by developers@appgain.io on 8/26/2018.
  */
-enum class PrinterTextAlign {
-    center, right, left
+enum class PrintTextDirction {
+     RTL, LTR
 }

@@ -10,7 +10,7 @@ object LineUtils {
     internal const val DASH: String = "-"
     internal const val EMPTY_LINE: String = "\n"
 
-    fun getLine(lineCount: Int, char: String): String {
+    fun getLineOfChar(lineCount: Int, char: String): String {
         var line = ""
         for (i in 0 until lineCount) line += char
         return line 
@@ -19,13 +19,13 @@ object LineUtils {
     fun  convertTextToLine(text: String, maxCharCountInLine: Int): MutableList<String> {
         val lineList = mutableListOf<String>()
         if (text.length > maxCharCountInLine) {
-            var startIndex = 1
-            while (startIndex <= text.length) {
-                var endIndex = startIndex + (maxCharCountInLine - 1)
+            var startIndex = 0
+            while (startIndex < text.length) {
+                var endIndex = startIndex + maxCharCountInLine
                 endIndex = if (endIndex > text.length) text.length else endIndex
                 val temp_line = text.substring(startIndex, endIndex)
                 lineList.add(temp_line)
-                startIndex +=maxCharCountInLine
+                startIndex = endIndex
             }
         } else {
            lineList.add(text)

@@ -9,7 +9,8 @@ import com.mobiiot.androidqapi.api.Utils.PrinterServiceUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import tkamul.ae.mdmcontrollers.PrinterModule.TkamulPrinterFactory
-import tkamul.ae.mdmcontrollers.PrinterModule.models.textFormat.PrinterTextAlign
+import tkamul.ae.mdmcontrollers.PrinterModule.models.textFormat.PrintTextAlign
+import tkamul.ae.mdmcontrollers.PrinterModule.models.textFormat.PrintTextDirction
 import tkamul.ae.mdmcontrollers.PrinterModule.models.textFormat.PrinterTextScale
 import tkamul.ae.mdmcontrollers.contollers.MDMControllers
 import tkamul.ae.mdmcontrollers.domain.core.Config
@@ -33,7 +34,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         PrinterServiceUtil.bindService(applicationContext)
-//        keyStoreUtils.addKeyStore()
         mdmControllers.mdmInfoController.invoke {
             connection.text = it.deviceInfo.serial_number
         }
@@ -42,17 +42,6 @@ class MainActivity : AppCompatActivity() {
 
 
     fun wifion(view: View) {
-       TkamulPrinterFactory.getTkamulPrinter(this)
-            .addText("hi")
-            .addText("hi x2" , PrinterTextScale.large)
-            .addText("hi x1" , PrinterTextScale.medium)
-            .addText("hi x" , PrinterTextScale.normal)
-            .addDashLine()
-            .addText("hi LTR" , printerTextAlign = PrinterTextAlign.left)
-            .addText("hi RTL" , printerTextAlign = PrinterTextAlign.right)
-            .addText("hi center" , printerTextAlign = PrinterTextAlign.center)
-            .addAsterisksLine()
-//            .printOnPaper()
         mdmControllers.invokProcess(event = Config.Events.WIFI_EVENT_ON )
     }
     fun wifionOff(view: View) {
@@ -96,6 +85,59 @@ class MainActivity : AppCompatActivity() {
     }
     fun locationon(view: View) {
         mdmControllers.invokProcess(event = Config.Events.LOCATION_EVENT_ON )
+
+    }
+
+    fun print(view: View) {
+        // print module test
+        TkamulPrinterFactory.getTkamulPrinter(this)
+            .addDashLine()
+            .addAsterisksLine()
+            .addDashLine()
+            .addText("start test")
+            .addDashLine()
+            .addAsterisksLine()
+            .addDashLine()
+             // testing sizes
+            .addText("hi x2" , PrinterTextScale.large)
+            .addText("hi x1" , PrinterTextScale.medium)
+            .addText("hi x" , PrinterTextScale.normal)
+            .addDashLine()
+            .addAsterisksLine()
+            .addDashLine()
+            //testing LTR
+            .addText("hi LTR" , printerTextDiriction = PrintTextDirction.LTR)
+            //testing RTL
+            .addText("RTL مرحباً" , printerTextDiriction = PrintTextDirction.RTL)
+            .addDashLine()
+            .addAsterisksLine()
+            .addDashLine()
+             //Testing LTR align
+            .addText("hi LTR LEFT")
+            .addText("hi LTR RIGHT" , printerTextAlign = PrintTextAlign.RIGHT )
+            .addText("hi LTR CENTER" ,printerTextAlign = PrintTextAlign.CENTER )
+            .addDashLine()
+            .addAsterisksLine()
+            .addDashLine()
+            //testing RTL align
+            .addText("RTL مرحباجهة اليسار" , printerTextAlign = PrintTextAlign.LEFT ,  printerTextDiriction = PrintTextDirction.RTL)
+            .addText("RTL مرحباًجهة اليمين" , printerTextAlign = PrintTextAlign.RIGHT , printerTextDiriction = PrintTextDirction.RTL)
+            .addText("RTL مرحباًبالمتصف" , printerTextAlign = PrintTextAlign.CENTER,  printerTextDiriction = PrintTextDirction.RTL)
+            .addDashLine()
+            .addAsterisksLine()
+            .addDashLine()
+            // testing 42 char in 1 string which should be printed  on 2 lines
+            .addText("123456789T" + "123456789T" + "123456789T" + "123456789T" + "12")
+            .addDashLine()
+            .addAsterisksLine()
+            .addDashLine()
+            .addText("end test")
+            .addDashLine()
+            .addAsterisksLine()
+            .addDashLine()
+            .printOnPaper()
+//        controller test
+        mdmControllers.invokProcess(event = Config.Events.PRINT_EVENT , printText = "controller test" )
 
     }
 }

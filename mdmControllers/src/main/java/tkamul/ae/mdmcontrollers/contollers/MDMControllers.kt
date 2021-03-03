@@ -4,6 +4,7 @@ import tkamul.ae.mdmcontrollers.data.gateways.socketModels.argsResponse.NameValu
 import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.Args
 import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.DeviceInfo2SocketPayload
 import tkamul.ae.mdmcontrollers.domain.core.Config
+import tkamul.ae.mdmcontrollers.domain.useCases.PrintUseCase
 import tkamul.ae.mdmcontrollers.domain.useCases.hardwareControllers.*
 import tkamul.ae.mdmcontrollers.domain.useCases.remote.MDMSocketChannelUseCase
 import javax.inject.Inject
@@ -21,7 +22,8 @@ import kotlin.concurrent.thread
  * don't access any use case from class variables
  *  invoke use cases via MDMControllers only
  */
-class MDMControllers  @Inject constructor(
+class
+MDMControllers  @Inject constructor(
     val bluetoothController  : BluetoothUseCase,
     val locationController  : LocationUseCase,
     val mdmInfoController  : MDMInfoUseCase,
@@ -30,6 +32,7 @@ class MDMControllers  @Inject constructor(
     val rebootController  : RebootUseCase,
     val shutdownController  : ShutdownUseCase,
     val wifiController : WifiUseCase,
+    val printController : PrintUseCase,
     var mdmSocketChannelController : MDMSocketChannelUseCase
 ){
 
@@ -37,12 +40,21 @@ class MDMControllers  @Inject constructor(
     /**
      * event router : routing from a string event to a use case
      */
+    fun invokProcess(event: String, printText: String?) {
+        invokProcess(
+            NameValuePairs(
+                event = event ,
+                args = tkamul.ae.mdmcontrollers.data.gateways.socketModels.argsResponse.Args(
+                    NameValuePairsX("internal",printText)
+                )
+            ))
+    }
     fun invokProcess(event : String) {
         invokProcess(
             NameValuePairs(
             event = event ,
             args = tkamul.ae.mdmcontrollers.data.gateways.socketModels.argsResponse.Args(
-                NameValuePairsX("internal")
+                NameValuePairsX("internal",null)
             )
         ))
     }
@@ -84,8 +96,18 @@ class MDMControllers  @Inject constructor(
                 Config.Events.LOCATION_EVENT_OFF -> {
                     invokeLocation( false,pairs)
                 }
+                Config.Events.PRINT_EVENT -> {
+                    invokePrint(pairs)
+                }
 
             }
+    }
+
+    /**
+     * invoke print use case
+     */
+    private fun invokePrint(pairs: NameValuePairs) {
+        printController.invoke(pairs.args.nameValuePairs.text?:"null")
     }
 
     /**
@@ -93,7 +115,7 @@ class MDMControllers  @Inject constructor(
       */
     private fun invokeLocation(enable: Boolean, pairs: NameValuePairs) {
         locationController.invoke(enable){
-            sendMobileStatus(pairs)
+            sendStatusToSETDeviceINFO(pairs)
         }
     }
 
@@ -102,7 +124,7 @@ class MDMControllers  @Inject constructor(
      */
     private fun invokeNFC(enable: Boolean, pairs: NameValuePairs) {
         nfcController.invoke(enable){
-            sendMobileStatus(pairs)
+            sendStatusToSETDeviceINFO(pairs)
         }
     }
 
@@ -111,7 +133,7 @@ class MDMControllers  @Inject constructor(
      */
     private fun invokeBluetooth(enable: Boolean, pairs: NameValuePairs) {
         bluetoothController.invoke(enable){
-            sendMobileStatus(pairs)
+            sendStatusToSETDeviceINFO(pairs)
         }
     }
 
@@ -120,7 +142,7 @@ class MDMControllers  @Inject constructor(
      */
     private fun invokedata(enable: Boolean, pairs: NameValuePairs) {
         mobileDataController.invoke(enable){
-            sendMobileStatus(pairs)
+            sendStatusToSETDeviceINFO(pairs)
         }
     }
 
@@ -130,14 +152,14 @@ class MDMControllers  @Inject constructor(
      */
     fun invokeWifi(enable: Boolean, pairs: NameValuePairs){
         wifiController.invoke(enable) {
-            sendMobileStatus(pairs)
+            sendStatusToSETDeviceINFO(pairs)
         }
      }
 
     /**
      * function to send all controls status + device info
      */
-    private fun sendMobileStatus( pairs: NameValuePairs) {
+    private fun sendStatusToSETDeviceINFO(pairs: NameValuePairs) {
         thread {
             // sleep 5 sec to wait controllers status to be ready
             // ex : wait wifi until have a status of (enable/disable) not (enabling/disabling )

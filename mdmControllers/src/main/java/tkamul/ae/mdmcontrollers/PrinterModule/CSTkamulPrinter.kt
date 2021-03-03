@@ -2,16 +2,12 @@ package tkamul.ae.mdmcontrollers.PrinterModule
 
 import android.content.Context
 import com.mobiiot.androidqapi.api.CsPrinter
-import com.mobiiot.androidqapi.api.MobiiotAPI
 import com.mobiiot.androidqapi.api.Utils.PrinterServiceUtil
-import com.mobiiot.androidqapi.api.Utils.ServiceUtil
-import com.mobiiot.androidqapi.api.Utils.ServiceUtilIOPrint
-import com.mobiiot.androidqapi.api.Utils.Utils
-import tkamul.ae.mdmcontrollers.PrinterModule.core.LineUtils
 import tkamul.ae.mdmcontrollers.PrinterModule.models.config.PrinterStatus
 import tkamul.ae.mdmcontrollers.PrinterModule.models.data.TkamulPrinterImageModel
 import tkamul.ae.mdmcontrollers.PrinterModule.models.data.TkamulPrinterTextModel
-import tkamul.ae.mdmcontrollers.PrinterModule.models.textFormat.PrinterTextAlign
+import tkamul.ae.mdmcontrollers.PrinterModule.models.textFormat.PrintTextAlign
+import tkamul.ae.mdmcontrollers.PrinterModule.models.textFormat.PrintTextDirction
 import tkamul.ae.mdmcontrollers.PrinterModule.models.textFormat.PrinterTextScale
 import tkamul.ae.mdmcontrollers.domain.core.Logger
 
@@ -45,7 +41,7 @@ class CSTkamulPrinter( val context: Context) : TkamulPrinterBase() {
     }
 
 
-    override fun getTextSize(scale: PrinterTextScale): Int {
+     fun getTextSize(scale: PrinterTextScale): Int {
         return when(scale){
             PrinterTextScale.large -> LARGE_TEXT
             PrinterTextScale.medium -> MED_TEXT
@@ -58,32 +54,26 @@ class CSTkamulPrinter( val context: Context) : TkamulPrinterBase() {
      * TODO("make keys for text font , alignment , bold , underline)
      */
     override fun PrintTextOnPaper(tkamulPrinterTextModel: TkamulPrinterTextModel) {
+        CsPrinter.printText_FullParam(
+            tkamulPrinterTextModel.text ,
+            getTextSize(tkamulPrinterTextModel.scale),
+            getTextDiriction(tkamulPrinterTextModel.dirction),
+            1, getTexAlign(tkamulPrinterTextModel.align), false, false
+        )
+    }
 
-        when(tkamulPrinterTextModel.align){
-            PrinterTextAlign.left ->{
-                CsPrinter.printText_FullParam(
-                    tkamulPrinterTextModel.text ,
-                    getTextSize(tkamulPrinterTextModel.scale),
-                    LTR,
-                    1, 0, false, false
-                )
-            }
-            PrinterTextAlign.right ->{
-                CsPrinter.printText_FullParam(
-                    tkamulPrinterTextModel.text ,
-                    getTextSize(tkamulPrinterTextModel.scale),
-                    RTL,
-                    1, 0, false, false
-                )
-            }
-            PrinterTextAlign.center ->{
-                CsPrinter.printText_FullParam(
-                    tkamulPrinterTextModel.text ,
-                    getTextSize(tkamulPrinterTextModel.scale),
-                    LTR,
-                    1, 1, false, false
-                )
-            }
+    private fun getTexAlign(align: PrintTextAlign): Int {
+        return when(align){
+            PrintTextAlign.LEFT -> ALIGN_LEFT
+            PrintTextAlign.RIGHT -> ALIGN_RIGHT
+            PrintTextAlign.CENTER -> ALIGN_CENTER
+        }
+    }
+
+    private fun getTextDiriction(dirction: PrintTextDirction): Int {
+        when(dirction){
+            PrintTextDirction.LTR -> return LTR
+            PrintTextDirction.RTL -> return RTL
         }
     }
 
@@ -102,8 +92,11 @@ class CSTkamulPrinter( val context: Context) : TkamulPrinterBase() {
         internal const val LARGE_TEXT = 3
         internal const val MED_TEXT = 2
         internal const val NORMAL_TEXT = 1
-        internal const val MAX_CHAR_COUNT: Int = 31
+        internal const val MAX_CHAR_COUNT: Int = 21
         internal const val LTR: Int = 0
         internal const val RTL: Int = 1
+        internal  const val ALIGN_LEFT = 0
+        internal  const val ALIGN_RIGHT = 2
+        internal  const val ALIGN_CENTER = 1
     }
 }
