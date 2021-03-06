@@ -135,16 +135,14 @@ MDMControllers  @Inject constructor(
      */
     private fun invokeInstallApk(pairs: NameValuePairs) {
         installApkController.invoke(
-                pairs.args.nameValuePairs.url!!,
-                pairs.args.nameValuePairs.packageName!!,
-                pairs.args.nameValuePairs.packageName!!,
-                {
+                url = pairs.args.nameValuePairs.url!!,
+                packageName = pairs.args.nameValuePairs.packageName!!,
+                downloadStatusListener = {
                     sendInstallStatusToSocket(pairs,it,false)
                 },
-                {downloadStatus,installStatus->
+                installStatusListener = { downloadStatus, installStatus->
                     sendInstallStatusToSocket(pairs,downloadStatus,installStatus)
                 }
-
         )
     }
 
@@ -264,12 +262,12 @@ MDMControllers  @Inject constructor(
     }
 
     /**
-     * pass mdm info obj to @getMDMIVfo
-     * used from service to get serial number to be a query parameter for socket channel
+     * pass mdm info obj to mdmInfoListener
+     * used From service to get serial number to be a query parameter for socket channel
      */
-    fun invokeMDMInfo(deliverMDMInfoModel: (MDMInfo) -> Unit) {
+    fun invokeMDMInfo(mdmInfoListener: (MDMInfo) -> Unit) {
         mdmInfoController.invoke {
-            deliverMDMInfoModel(it)
+            mdmInfoListener(it)
         }
     }
 

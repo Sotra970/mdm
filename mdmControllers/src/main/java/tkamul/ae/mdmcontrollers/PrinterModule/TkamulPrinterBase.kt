@@ -12,6 +12,7 @@ import tkamul.ae.mdmcontrollers.PrinterModule.models.data.TkamulPrintingData
 import tkamul.ae.mdmcontrollers.PrinterModule.models.textFormat.PrintTextAlign
 import tkamul.ae.mdmcontrollers.PrinterModule.models.textFormat.PrintTextDirction
 import tkamul.ae.mdmcontrollers.PrinterModule.models.textFormat.PrinterTextScale
+import tkamul.ae.mdmcontrollers.domain.core.Config
 import tkamul.ae.mdmcontrollers.domain.core.Logger
 import java.lang.RuntimeException
 import java.lang.StringBuilder
@@ -29,27 +30,27 @@ abstract class TkamulPrinterBase {
     protected abstract fun setup()
 
     /**
-     * check child  printer status before printing
+     * get printer child status before printing
      */
     public abstract fun getPrinterStatus() : DevicePrinterStatus
 
     /**
-     * get child printer mac char by line
+     * get printer child  max char by line
      */
     protected abstract fun getMaxCharCountInLine():Int
 
     /**
-     * make child print text model
+     * make printer child  print text model
      */
     protected abstract fun PrintTextOnPaper(tkamulPrinterTextModel : TkamulPrinterTextModel) : LinePrintingStatus
 
     /**
-     * make child print image model
+     * make printer child  print image model
      */
     protected abstract fun PrintImageOnPaper(tkamulPrinterImageModel : TkamulPrinterImageModel) : LinePrintingStatus
 
     /**
-     * make child finish printing to save voltage & temperature
+     * make printer child  finish printing to save voltage & temperature
      */
     protected abstract fun endingPrinterChild()
 
@@ -202,11 +203,10 @@ abstract class TkamulPrinterBase {
             Logger.logd("model" + Build.MODEL)
             val model = Build.MODEL
             return when (Build.MODEL.trim { it <= ' ' }) {
-                "MobiPrint" -> PrinterType.MOBIEWIRE
-                "MP3" -> PrinterType.MOBIEWIRE
-                "MobiPrint 4+" -> PrinterType.CSPRINTER
-                "MP4" -> PrinterType.CSPRINTER
-                "MP3_Plus" -> PrinterType.CSPRINTER
+                Config.MP3_MODEL_NAME -> PrinterType.MOBIEWIRE
+                Config.MP4P_MODEL_NAME -> PrinterType.CSPRINTER
+                Config.MP4_MODEL_NAME -> PrinterType.CSPRINTER
+                Config.MP3P_MODEL_NAME -> PrinterType.CSPRINTER
                 else -> PrinterType.CSPRINTER
             }
         }

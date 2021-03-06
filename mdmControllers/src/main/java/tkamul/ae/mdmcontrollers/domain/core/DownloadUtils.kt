@@ -27,9 +27,12 @@ class DownloadUtils(
          * static function to excite download call
          * notify subscriber when download finish
          * deliver download status every 1 sec
+         * @param packageName must be a package name like com.myapplication
+         * @param internal default false : file will be  downloaded inside app directory
+         * @param internal default true : file will be  downloaded inside public download directory
          */
-        fun enqueue(context: Context, url: String, fileName: String, internal : Boolean, downloadListener: DownloadListener): Long {
-            DownloadUtils(context, url, fileName , internal)
+        fun enqueue(context: Context, url: String, packageName: String, internal : Boolean = false, downloadListener: DownloadListener): Long {
+            DownloadUtils(context, url, packageName , internal)
                     .run {
                 val downloadRef = downloadMedia()
                 trackUpdates(downloadListener)

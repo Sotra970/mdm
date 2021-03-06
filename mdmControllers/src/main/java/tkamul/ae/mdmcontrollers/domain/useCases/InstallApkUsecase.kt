@@ -2,7 +2,6 @@ package tkamul.ae.mdmcontrollers.domain.useCases
 
 import android.content.Context
 import android.os.Build
-import com.google.gson.Gson
 import tkamul.ae.mdmcontrollers.domain.core.DownloadUtils
 import tkamul.ae.mdmcontrollers.domain.core.Logger
 import tkamul.ae.mdmcontrollers.service.MobiMediaTechServiceUtil
@@ -17,29 +16,27 @@ class InstallApkUsecase @Inject constructor(
         val mobiMediaTechServiceUtil: MobiMediaTechServiceUtil
         ){
     /**
-     * print incoming text
-     * return printing status
+     * download apk
+     * then install apk
+     * deliver download status to consumer
+     * deliver install status to consumer
+     * @see DownloadUtils.enqueue() Documentation
      */
     @Throws(RuntimeException::class)
-     fun invoke(url : String , appName:String,packageName : String ,
-                deliverDownloadStatus : (DownloadUtils.DownloadStatus)->Unit ,
-                deliverInstallStatus : (DownloadUtils.DownloadStatus, Boolean)->Unit
+     fun invoke(url : String, packageName : String,
+                downloadStatusListener : (DownloadUtils.DownloadStatus)->Unit,
+                installStatusListener : (DownloadUtils.DownloadStatus, Boolean)->Unit
     ){
-        DownloadUtils.enqueue(
-                context ,
-                url,
-                appName,
-                false ,
-                object : DownloadUtils.DownloadListener{
+        DownloadUtils.enqueue(context = context , url = url, packageName = packageName , downloadListener = object : DownloadUtils.DownloadListener{
                     override fun onFinish(referenceId: Long, downloadStatus: DownloadUtils.DownloadStatus) {
                         Logger.logd("onFinish  : $downloadStatus")
-                        installAPk(downloadStatus, packageName,deliverInstallStatus)
+                        installAPk(downloadStatus, packageName,installStatusListener)
 
                     }
 
                     override fun deliverStatus(downloadStatus: DownloadUtils.DownloadStatus) {
                         Logger.logd("deliverStatus : $downloadStatus" )
-                        deliverDownloadStatus(downloadStatus)
+                        downloadStatusListener(downloadStatus)
                     }
 
                 }
@@ -60,30 +57,25 @@ class InstallApkUsecase @Inject constructor(
     private fun installPreQ(downloadStatus: DownloadUtils.DownloadStatus, packageName: String, onFinish: (DownloadUtils.DownloadStatus, Boolean) -> Unit) {
         mobiMediaTechServiceUtil.getGoInterface {
           it.installApp(downloadStatus.fileUri,packageName)
-            val x = it.packageList
             onFinish(downloadStatus , it.packageList.containsApp(packageName))
-
         }
     }
 
 
 
-   /* AppType:ThirdApp
-
-    PackageName:numan.altkamul
-
-    AppName:AlTkamul
-
-    Version:1.2.1.8
+   /**
+    * ext function
+    * @return true if incoming package name  from socket exist in device , false if its not matching any
+    * every child in list contain :
+    * AppType:ThirdApp\n\nPackageName:numan.altkamul\n\nAppName:AlTkamul\n\nVersion:1.2.1.8\n\n
+    * childPackageName = a trim string between (index of "PackageName:" + its length) , index of "AppName"
 */
-
     private fun <E> MutableList<E>.containsApp(packageName: String): Boolean {
     for (child in this){
         child as String
         val childPackageName  = child.substring(child.indexOf("PackageName")+"PackageName:".length , child.indexOf("AppName")).trim()
         if (childPackageName.equals(packageName,true))
             return true
-
     }
     return false
 }

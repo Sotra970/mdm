@@ -21,7 +21,7 @@ class BluetoothUseCase @Inject constructor(
         Logger.logd("Build.VERSION : "+Build.VERSION.SDK_INT)
         if (Build.VERSION.SDK_INT == 29) {
             invokeAndroidQSenario(enable , onFinish)
-        } else if (Build.MODEL.equals(Config.MP4_MODEL)){
+        } else if (Build.MODEL.equals(Config.MP4_MODEL_NAME)){
             invokeNotMObieSenario(enable , onFinish)
         }else {
             invokeRestAndroidApiLevelSenario(enable , onFinish)

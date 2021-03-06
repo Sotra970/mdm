@@ -1,6 +1,5 @@
 package tkamul.ae.mdmcontrollers.PrinterModule
 
-import com.mobiiot.androidqapi.api.Utils.Line
 import com.nbbse.mobiprint3.Printer
 import tkamul.ae.mdmcontrollers.PrinterModule.models.config.DevicePrinterStatus
 import tkamul.ae.mdmcontrollers.PrinterModule.models.config.LinePrintingStatus
@@ -16,15 +15,11 @@ class MobiWireTkamulPrinter : TkamulPrinterBase() {
 
     private lateinit var mobiWirePrinter : Printer
 
+    /**
+     *  {@inheritDoc}
+     */
     override fun setup() {
         mobiWirePrinter = Printer.getInstance()
-    }
-     fun getTextSize(scale : PrinterTextScale): Int {
-       return when(scale){
-            PrinterTextScale.large->  LARGE_TEXT
-            PrinterTextScale.medium ->  MED_TEXT
-            PrinterTextScale.normal -> NORMAL_TEXT
-       }
     }
 
     override fun PrintTextOnPaper(tkamulPrinterTextModel: TkamulPrinterTextModel) : LinePrintingStatus{
@@ -52,6 +47,17 @@ class MobiWireTkamulPrinter : TkamulPrinterBase() {
         return when(dirction){
             PrintTextDirction.LTR->false
             PrintTextDirction.RTL->true
+        }
+    }
+
+    /**
+     * getting mp3 text  size  depend on scale
+     */
+    fun getTextSize(scale : PrinterTextScale): Int {
+        return when(scale){
+            PrinterTextScale.large->  LARGE_TEXT
+            PrinterTextScale.medium ->  MED_TEXT
+            PrinterTextScale.normal -> NORMAL_TEXT
         }
     }
 

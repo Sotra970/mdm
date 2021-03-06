@@ -17,7 +17,9 @@ import tkamul.ae.mdmcontrollers.domain.core.Logger
  */
 class CSTkamulPrinter( val context: Context) : TkamulPrinterBase() {
 
-
+    /**
+     *  {@inheritDoc}
+     */
     override fun setup() {
         PrinterServiceUtil.bindService(context)
 //        ServiceUtil.bindRemoteService(context)
@@ -50,6 +52,9 @@ class CSTkamulPrinter( val context: Context) : TkamulPrinterBase() {
     }
 
 
+    /**
+     *  {@inheritDoc}
+     */
     override fun getMaxCharCountInLine(): Int {
        return MAX_CHAR_COUNT
     }
@@ -100,7 +105,8 @@ class CSTkamulPrinter( val context: Context) : TkamulPrinterBase() {
     }
 
     /**
-     * int(direction of text)[1-3]
+     * LTR -> 0
+     * RTL ->1
      */
     private fun getTextDiriction(dirction: PrintTextDirction): Int {
         when(dirction){
@@ -108,6 +114,7 @@ class CSTkamulPrinter( val context: Context) : TkamulPrinterBase() {
             PrintTextDirction.RTL -> return RTL
         }
     }
+
 
     override fun PrintImageOnPaper(tkamulPrinterImageModel: TkamulPrinterImageModel) :LinePrintingStatus{
         if (tkamulPrinterImageModel.path != null)

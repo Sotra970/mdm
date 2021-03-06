@@ -34,7 +34,10 @@ object Config {
         const val MDM_NOTIFICATION_CHANNNEL_NAME = "MDM"
     }
 
-    const val MP4_MODEL =  "MP4"
+    const val MP4P_MODEL_NAME =  "MobiPrint 4+"
+    const val MP4_MODEL_NAME =  "MP4"
+    const val MP3P_MODEL_NAME =  "MP3_Plus"
+    const val MP3_MODEL_NAME =  "MP3"
     const val MDM_SOCKET_CHANNEL: String = "message"
     const val SET_DEVICE_INFO_SOCKET_CHANNEL: String = "message"
     const val MDM_SOCKET_URL = "https://mdm-server-io.herokuapp.com"
