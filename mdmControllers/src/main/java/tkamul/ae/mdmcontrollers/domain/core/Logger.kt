@@ -21,6 +21,7 @@ object Logger {
     @JvmStatic
      inline fun logd(message : Any?){
         Timber.d(message?.toString()?:"null")
+        Log.d("logger" , message?.toString()?:"null")
     }
     @JvmStatic
     inline fun loge(e: Throwable?) {

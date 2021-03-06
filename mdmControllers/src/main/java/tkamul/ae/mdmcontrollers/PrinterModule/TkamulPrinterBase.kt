@@ -208,7 +208,7 @@ abstract class TkamulPrinterBase {
             return when (Build.MODEL.trim { it <= ' ' }) {
                 "MobiPrint" -> PrinterType.MOBIEWIRE
                 "MP3" -> PrinterType.MOBIEWIRE
-                "MP4_Plus" -> PrinterType.CSPRINTER
+                "MobiPrint 4+" -> PrinterType.CSPRINTER
                 "MP4" -> PrinterType.CSPRINTER
                 "MP3_Plus" -> PrinterType.CSPRINTER
                 else -> PrinterType.CSPRINTER
