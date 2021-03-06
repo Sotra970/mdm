@@ -1,8 +1,8 @@
-package tkamul.ae.mdmcontrollers.domain.useCases.hardwareControllers
+package tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases
 
 import android.content.Context
 import tkamul.ae.mdmcontrollers.service.MobiMediaTechServiceUtil
-import tkamul.ae.mdmcontrollers.domain.useCases.hardwareControllers.core.NFCUtil
+import tkamul.ae.mdmcontrollers.domain.core.NFCUtil
 import javax.inject.Inject
 
 

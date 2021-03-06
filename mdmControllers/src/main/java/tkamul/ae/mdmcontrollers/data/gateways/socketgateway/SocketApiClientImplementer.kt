@@ -1,17 +1,13 @@
 package tkamul.ae.mdmcontrollers.data.gateways.socketgateway
 
 import com.google.gson.Gson
-import com.mediatek.settings.service.DeviceInfo
 import io.socket.client.Ack
 import io.socket.client.IO
-import io.socket.client.Manager
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
 import tkamul.ae.mdmcontrollers.domain.core.Config
 import tkamul.ae.mdmcontrollers.domain.core.Logger
-import tkamul.ae.mdmcontrollers.domain.useCases.hardwareControllers.MDMInfoUseCase
 import java.net.URISyntaxException
-import javax.inject.Inject
 
 
 /**

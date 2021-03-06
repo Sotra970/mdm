@@ -1,19 +1,21 @@
-package tkamul.ae.mdmcontrollers.domain.useCases.hardwareControllers
+package tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases
 
+import android.content.Context
 import android.os.Build
 import tkamul.ae.mdmcontrollers.domain.core.Logger
 import tkamul.ae.mdmcontrollers.service.MobiMediaTechServiceUtil
-import java.lang.RuntimeException
 import javax.inject.Inject
+
 
 /**
  * Created by sotra@altakamul.tr on 2/17/2021.
  */
-class WifiUseCase @Inject constructor(
-    var mobiMediaTechServiceUtil: MobiMediaTechServiceUtil
+class LocationUseCase @Inject constructor(
+    var mobiMediaTechServiceUtil: MobiMediaTechServiceUtil,
+    val context: Context
 ){
     @Throws(RuntimeException::class)
-     fun invoke(enable: Boolean, onFinish: () -> Unit){
+     fun invoke(enable: Boolean , onFinish: () -> Unit){
         Logger.logd("Build.VERSION : "+Build.VERSION.SDK_INT)
         if (Build.VERSION.SDK_INT == 29) {
             invokeAndroidQSenario(enable , onFinish)
@@ -30,9 +32,9 @@ class WifiUseCase @Inject constructor(
     ) {
            mobiMediaTechServiceUtil.getGoInterface {
                if (enable){
-                   it.enableWifi()
+                   it.enableLocation()
                }else{
-                   it.disableWifi()
+                   it.disableLocation()
                }
                onFinish()
            }
@@ -42,11 +44,13 @@ class WifiUseCase @Inject constructor(
     private fun invokeAndroidQSenario(enable: Boolean, onFinish: () -> Unit) {
         mobiMediaTechServiceUtil.getQInterface {
             if (enable){
-                it.enableWifi()
+                it.enableLocation()
             }else{
-                it.disableWifi()
+                it.disableLocation()
             }
             onFinish()
         }
     }
+
+
 }

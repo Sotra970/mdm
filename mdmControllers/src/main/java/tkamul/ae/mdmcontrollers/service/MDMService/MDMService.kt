@@ -12,12 +12,12 @@ import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.DeviceI
 import tkamul.ae.mdmcontrollers.data.gateways.socketgateway.SocketEventListener
 import tkamul.ae.mdmcontrollers.domain.core.Config
 import tkamul.ae.mdmcontrollers.domain.core.extentionFunction.toArgsResponse
-import tkamul.ae.mdmcontrollers.domain.useCases.hardwareControllers.MDMInfo
+import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.MDMInfo
 import tkamul.ae.mdmcontrollers.domain.useCases.remote.MDMSocketChannelUseCase
 import javax.inject.Inject
+
 @AndroidEntryPoint
 class MDMService : Service() {
-//    $adb logcat | grep --invert-match 'notshownmatchpattern'
     private var startMode: Int = START_REDELIVER_INTENT // indicates how to behave if the service is killed
     private var allowRebind: Boolean = true   // indicates whether onRebind should be used
     private var mdmdBinderImplemnter : MDMBinderImplemnter =
@@ -54,14 +54,14 @@ class MDMService : Service() {
         })
     }
 
-    private fun sendDeviceInfo(info: MDMInfo, pairs:NameValuePairs) {
+   /* private fun sendDeviceInfo(info: MDMInfo, pairs:NameValuePairs) {
         mdmSocketChannelUseCase.send(
             DeviceInfo2SocketPayload(
-            event = Config.Events.ON_CONNECT ,
-            device = info,
-            args = Args(pairs.args.nameValuePairs.ray_id)
-        ))
-    }
+                    args = Args(pairs.args.nameValuePairs.ray_id),
+                    device = info,
+                    event = Config.Events.ON_CONNECT
+            ))
+    }*/
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

@@ -1,4 +1,4 @@
-package tkamul.ae.mdmcontrollers.domain.useCases.hardwareControllers
+package tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases
 
 import android.content.Context
 import tkamul.ae.mdmcontrollers.PrinterModule.TkamulPrinterFactory

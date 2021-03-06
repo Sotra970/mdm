@@ -1,9 +1,8 @@
-package tkamul.ae.mdmcontrollers.domain.useCases.hardwareControllers.core
+package tkamul.ae.mdmcontrollers.domain.core
 
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.content.Context
-import tkamul.ae.mdmcontrollers.domain.core.Config
 
 /**
  * Created by sotra@altakamul.tr on 2/26/2021.

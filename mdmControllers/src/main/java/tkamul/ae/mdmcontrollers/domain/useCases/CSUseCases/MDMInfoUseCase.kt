@@ -1,4 +1,4 @@
-package tkamul.ae.mdmcontrollers.domain.useCases.hardwareControllers
+package tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases
 
 import android.content.Context
 import android.os.Build
@@ -8,9 +8,9 @@ import tkamul.ae.mdmcontrollers.PrinterModule.models.config.DevicePrinterStatus
 import tkamul.ae.mdmcontrollers.PrinterModule.models.config.LinePrintingStatus
 import tkamul.ae.mdmcontrollers.domain.core.Logger
 import tkamul.ae.mdmcontrollers.service.MobiMediaTechServiceUtil
-import tkamul.ae.mdmcontrollers.domain.useCases.hardwareControllers.core.BluetoothUtil
-import tkamul.ae.mdmcontrollers.domain.useCases.hardwareControllers.core.LocationUtils
-import tkamul.ae.mdmcontrollers.domain.useCases.hardwareControllers.core.NFCUtil
+import tkamul.ae.mdmcontrollers.domain.core.BluetoothUtil
+import tkamul.ae.mdmcontrollers.domain.core.LocationUtils
+import tkamul.ae.mdmcontrollers.domain.core.NFCUtil
 import java.lang.RuntimeException
 import javax.inject.Inject
 

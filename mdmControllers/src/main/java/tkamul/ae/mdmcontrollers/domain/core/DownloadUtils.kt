@@ -1,4 +1,4 @@
-package ae.tkamul
+package tkamul.ae.mdmcontrollers.domain.core
 
 import android.app.DownloadManager
 import android.content.BroadcastReceiver
@@ -16,7 +16,7 @@ import kotlin.properties.Delegates
 /**
  * Created by sotra@altakamul.tr on 3/4/2021.
  */
-internal class DownloadUtils(
+class DownloadUtils(
         private val context: Context,
         private val URL: String,
         private val incomingFileName: String ,
@@ -152,7 +152,7 @@ internal class DownloadUtils(
                 //check if the broadcast message is for our Enqueued download
                 val referenceId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
                 if (downloadReference == referenceId) {
-                    onDownloadFinished.onFinish(referenceId, getStatus().fileUri)
+                    onDownloadFinished.onFinish(referenceId, getStatus())
                     timer.cancel()
                 }
             }
@@ -162,8 +162,8 @@ internal class DownloadUtils(
     }
 
 
-    internal interface DownloadListener {
-        fun onFinish(referenceId: Long, filename: String?)
+     interface DownloadListener {
+        fun onFinish(referenceId: Long, filename: DownloadStatus)
         fun deliverStatus(downloadStatus: DownloadStatus)
     }
     data class DownloadStatus(val statusText: String?, val reasonText: String?, val referenceId: Long, val fileUri: String?)

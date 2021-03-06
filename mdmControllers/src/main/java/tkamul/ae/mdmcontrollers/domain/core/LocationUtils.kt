@@ -1,4 +1,4 @@
-package tkamul.ae.mdmcontrollers.domain.useCases.hardwareControllers.core
+package tkamul.ae.mdmcontrollers.domain.core
 
 import android.annotation.SuppressLint
 import android.content.Context

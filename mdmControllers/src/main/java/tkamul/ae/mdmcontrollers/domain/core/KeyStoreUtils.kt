@@ -1,12 +1,10 @@
-package tkamul.ae.mdmcontrollers.domain.useCases.hardwareControllers.core
+package tkamul.ae.mdmcontrollers.domain.core
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.pm.Signature
 import android.os.Build
-import tkamul.ae.mdmcontrollers.domain.core.Logger
-import tkamul.ae.mdmcontrollers.domain.useCases.hardwareControllers.MDMInfoUseCase
 import tkamul.ae.mdmcontrollers.service.MobiMediaTechServiceUtil
 
 class KeyStoreUtils(

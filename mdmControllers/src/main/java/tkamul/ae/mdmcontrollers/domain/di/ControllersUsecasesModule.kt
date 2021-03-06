@@ -6,9 +6,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import tkamul.ae.mdmcontrollers.domain.useCases.hardwareControllers.PrintUseCase
-import tkamul.ae.mdmcontrollers.domain.useCases.hardwareControllers.*
-import tkamul.ae.mdmcontrollers.domain.useCases.hardwareControllers.core.KeyStoreUtils
+import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.PrintUseCase
+import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.*
+import tkamul.ae.mdmcontrollers.domain.core.KeyStoreUtils
+import tkamul.ae.mdmcontrollers.domain.useCases.InstallApkUsecase
 import tkamul.ae.mdmcontrollers.service.MobiMediaTechServiceUtil
 import javax.inject.Singleton
 
@@ -22,6 +23,14 @@ class ControllersUsecasesModule {
     @Provides
     fun providePrintController(@ApplicationContext context:Context): PrintUseCase {
         return PrintUseCase(context)
+    }
+
+    @Provides
+    fun provideInstallApkUseCase(
+            @ApplicationContext appContext: Context ,
+            mobiMediaTechServiceUtil: MobiMediaTechServiceUtil
+    ): InstallApkUsecase {
+        return InstallApkUsecase(appContext,mobiMediaTechServiceUtil)
     }
 
     @Provides

@@ -140,8 +140,6 @@ abstract class TkamulPrinterBase {
                     Logger.logd("PrinterLines : $logLines")
                     // clear queue
                     printQueue.clear()
-                    // throw the runtime error while printing
-                    throw RuntimeException(printiSgtatus.errorMessage)
                     return printiSgtatus
                 }
             }
@@ -155,10 +153,8 @@ abstract class TkamulPrinterBase {
             return printiSgtatus
         }else{
             // printer have an issue(out of paper or temperature ) before printing
-            // throw exception and clear our queue
             val notReadyPrinterStatus = getPrinterStatus().status
             printQueue.clear()
-            throw RuntimeException()
             return printiSgtatus.apply {
                 errorMessage = notReadyPrinterStatus
             }

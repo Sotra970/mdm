@@ -1,10 +1,8 @@
-package tkamul.ae.mdmcontrollers.domain.useCases.hardwareControllers.core
+package tkamul.ae.mdmcontrollers.domain.core
 
 import android.content.Context
 import android.nfc.NfcAdapter
 import android.nfc.NfcManager
-import tkamul.ae.mdmcontrollers.domain.core.Config
-import tkamul.ae.mdmcontrollers.domain.core.Logger
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 
