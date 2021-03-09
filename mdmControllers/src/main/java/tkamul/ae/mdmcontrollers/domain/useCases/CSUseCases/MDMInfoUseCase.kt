@@ -2,15 +2,14 @@ package tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases
 
 import android.content.Context
 import android.os.Build
-import com.mediatek.settings.service.DeviceInfo
 import org.json.JSONObject
-import tkamul.ae.mdmcontrollers.PrinterModule.models.config.DevicePrinterStatus
-import tkamul.ae.mdmcontrollers.PrinterModule.models.config.LinePrintingStatus
 import tkamul.ae.mdmcontrollers.domain.core.Logger
 import tkamul.ae.mdmcontrollers.service.MobiMediaTechServiceUtil
 import tkamul.ae.mdmcontrollers.domain.core.BluetoothUtil
 import tkamul.ae.mdmcontrollers.domain.core.LocationUtils
 import tkamul.ae.mdmcontrollers.domain.core.NFCUtil
+import tkamul.ae.mdmcontrollers.domain.core.extentionFunction.toPackageInfoList
+import tkamul.ae.mdmcontrollers.domain.entities.MDMInfo
 import java.lang.RuntimeException
 import javax.inject.Inject
 
@@ -18,17 +17,6 @@ import javax.inject.Inject
  * Created by sotra@altakamul.tr on 2/17/2021.
  */
 
-data class  MDMInfo(
-    val deviceInfo: DeviceInfo,
-    val wifiStatus: String?,
-    val nfcStatus: String?,
-    val locationStatus: String?,
-    val dataStatus: String?,
-    val bluetoothStatus: String?,
-    val printerStatus: DevicePrinterStatus
-) {
-     var lastLineStatus: LinePrintingStatus? = null
-}
 
 class MDMInfoUseCase @Inject constructor(
     var mobiMediaTechServiceUtil: MobiMediaTechServiceUtil ,
@@ -57,7 +45,8 @@ class MDMInfoUseCase @Inject constructor(
                         locationStatus = getLocationOBJ(it.curLocationMode , it.location)  ,
                         dataStatus = it.dataStatus ,
                         bluetoothStatus = BluetoothUtil.getBluetoothAdapterState(context),
-                        printerStatus = printerController.getPrinterStats()
+                        printerStatus = printerController.getPrinterStats(),
+                        installedPackages = it.packageList.toPackageInfoList()
                   )
               )
            }
@@ -74,7 +63,8 @@ class MDMInfoUseCase @Inject constructor(
                     locationStatus = getLocationOBJ(it.curLocationMode , it.location),
                     dataStatus = it.dataStatus,
                     bluetoothStatus = BluetoothUtil.getBluetoothAdapterState(context),
-                    printerStatus = printerController.getPrinterStats()
+                    printerStatus = printerController.getPrinterStats(),
+                    installedPackages = it.packageList.toPackageInfoList()
                 )
             )
         }
@@ -90,3 +80,4 @@ class MDMInfoUseCase @Inject constructor(
 
 
 }
+

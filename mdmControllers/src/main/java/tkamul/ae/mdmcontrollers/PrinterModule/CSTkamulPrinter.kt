@@ -22,8 +22,6 @@ class CSTkamulPrinter( val context: Context) : TkamulPrinterBase() {
      */
     override fun setup() {
         PrinterServiceUtil.bindService(context)
-//        ServiceUtil.bindRemoteService(context)
-
     }
 
     /**

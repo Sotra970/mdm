@@ -21,7 +21,8 @@ object Logger {
     @JvmStatic
      inline fun logd(message : Any?){
         Timber.d(message?.toString()?:"null")
-        Log.d("logger" , message?.toString()?:"null")
+        Log.d("mdm" , message?.toString()?:"null")
+        // todo add to logger remote queue
     }
     @JvmStatic
     inline fun loge(e: Throwable?) {

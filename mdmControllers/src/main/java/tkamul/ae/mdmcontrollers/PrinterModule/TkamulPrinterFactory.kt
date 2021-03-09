@@ -20,10 +20,10 @@ object TkamulPrinterFactory {
      fun getTkamulPrinter(context: Context):TkamulPrinterBase{
         return when(TkamulPrinterBase.getPrinterType()){
             PrinterType.MOBIEWIRE ->{
-                   MobiWireTkamulPrinter()
+                   MobiWireTkamulPrinter() // mp3
             }
             PrinterType.CSPRINTER ->{
-                CSTkamulPrinter(context)
+                CSTkamulPrinter(context)// mp3+ , mp4+ , mp4
             }
         }
     }

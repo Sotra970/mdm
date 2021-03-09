@@ -5,14 +5,11 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import dagger.hilt.android.AndroidEntryPoint
-import tkamul.ae.mdmcontrollers.contollers.MDMControllers
-import tkamul.ae.mdmcontrollers.data.gateways.socketModels.argsResponse.NameValuePairs
-import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.Args
-import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.DeviceInfo2SocketPayload
+import tkamul.ae.mdmcontrollers.contollers.EventExecutorController
 import tkamul.ae.mdmcontrollers.data.gateways.socketgateway.SocketEventListener
 import tkamul.ae.mdmcontrollers.domain.core.Config
 import tkamul.ae.mdmcontrollers.domain.core.extentionFunction.toArgsResponse
-import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.MDMInfo
+import tkamul.ae.mdmcontrollers.domain.entities.MDMInfo
 import tkamul.ae.mdmcontrollers.domain.useCases.remote.MDMSocketChannelUseCase
 import javax.inject.Inject
 
@@ -27,12 +24,12 @@ class MDMService : Service() {
     lateinit var mdmSocketChannelUseCase: MDMSocketChannelUseCase
 
     @Inject
-    lateinit var mdmControllers: MDMControllers
+    lateinit var eventExecutorController: EventExecutorController
 
     override fun onCreate() {
         super.onCreate()
         showNotification(Config.SericeNotification.MDM_NOTIFICATION_ATTACHED_BODY)
-        mdmControllers.invokeMDMInfo {
+        eventExecutorController.invokeMDMInfo {
             startListingOnSocketEvents(it)
         }
     }
@@ -49,7 +46,7 @@ class MDMService : Service() {
                 showNotification(Config.SericeNotification.MDM_NOTIFICATION_DISCONECTED_BODY)
             }
             override fun onNewMessage(vararg args: Any) {
-                mdmControllers.invokProcess(args.toArgsResponse())
+                eventExecutorController.invokProcess(args.toArgsResponse())
             }
         })
     }

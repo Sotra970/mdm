@@ -9,7 +9,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.PrintUseCase
 import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.*
 import tkamul.ae.mdmcontrollers.domain.core.KeyStoreUtils
-import tkamul.ae.mdmcontrollers.domain.useCases.InstallApkUsecase
+import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.InstallApkUsecase
 import tkamul.ae.mdmcontrollers.service.MobiMediaTechServiceUtil
 import javax.inject.Singleton
 
@@ -23,6 +23,13 @@ class ControllersUsecasesModule {
     @Provides
     fun providePrintController(@ApplicationContext context:Context): PrintUseCase {
         return PrintUseCase(context)
+    }
+
+    @Provides
+    fun provideUnInstallApkUseCase(
+            mobiMediaTechServiceUtil: MobiMediaTechServiceUtil
+    ): UnInstallApkUsecase {
+        return UnInstallApkUsecase(mobiMediaTechServiceUtil)
     }
 
     @Provides

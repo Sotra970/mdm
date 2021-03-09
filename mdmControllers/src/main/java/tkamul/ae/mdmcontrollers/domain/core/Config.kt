@@ -43,6 +43,7 @@ object Config {
     const val MDM_SOCKET_URL = "https://mdm-server-io.herokuapp.com"
 
     object Events {
+        const val  UNINSTALL_EVENT= "uninstall-apk"
         const val  INSTALL_EVENT= "install-apk"
         const val ON_CONNECT: String = "setDeviceInfo"
         const val WIFI_EVENT_ON = "wifi-on"

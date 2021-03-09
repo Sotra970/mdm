@@ -21,10 +21,8 @@ class BluetoothUseCase @Inject constructor(
         Logger.logd("Build.VERSION : "+Build.VERSION.SDK_INT)
         if (Build.VERSION.SDK_INT == 29) {
             invokeAndroidQSenario(enable , onFinish)
-        } else if (Build.MODEL.equals(Config.MP4_MODEL_NAME)){
+        } else{
             invokeNotMObieSenario(enable , onFinish)
-        }else {
-            invokeRestAndroidApiLevelSenario(enable , onFinish)
         }
     }
 
@@ -43,6 +41,9 @@ class BluetoothUseCase @Inject constructor(
     }
 
 
+    /**
+     * not working with Go interface so we are contacting mobiIot support
+     */
     @Throws(RuntimeException::class)
     private fun invokeRestAndroidApiLevelSenario(
         enable: Boolean,

@@ -2,106 +2,114 @@ package ae.tkamul
 
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
-import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.View
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import com.mobiiot.androidqapi.api.Utils.PrinterServiceUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import tkamul.ae.mdmcontrollers.PrinterModule.TkamulPrinterFactory
 import tkamul.ae.mdmcontrollers.PrinterModule.models.textFormat.PrintTextAlign
 import tkamul.ae.mdmcontrollers.PrinterModule.models.textFormat.PrintTextDirction
 import tkamul.ae.mdmcontrollers.PrinterModule.models.textFormat.PrinterTextScale
-import tkamul.ae.mdmcontrollers.contollers.MDMControllers
+import tkamul.ae.mdmcontrollers.contollers.InternalEventExecutor
 import tkamul.ae.mdmcontrollers.domain.core.Config
-import tkamul.ae.mdmcontrollers.domain.core.KeyStoreUtils
-import java.io.File
+import tkamul.ae.mdmcontrollers.domain.core.Logger
+import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.MDMInfoUseCase
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
 
-    @Inject
-    lateinit var mdmControllers: MDMControllers
 
     @Inject
-    lateinit var keyStoreUtils: KeyStoreUtils
+    lateinit var internalEventExecutorController: InternalEventExecutor
+
+    @Inject
+    lateinit var  mdmInfoUseCase: MDMInfoUseCase
 
 
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         bindSerilaNumber()
-
     }
 
     private fun bindSerilaNumber() {
-        mdmControllers.mdmInfoController.invoke {
+        mdmInfoUseCase.invoke {
             connection.text = it.deviceInfo.serial_number
         }
     }
 
-
-
-    fun install(view:View){
-        mdmControllers.invokeInternalInstallProcess(
-                event = Config.Events.INSTALL_EVENT ,
-                url = "https://cdn.appgain.io/docs/appgain/androidSDKtestapp/app-release.apk",
+    fun unInstall(view: View){
+        internalEventExecutorController.invokeInternalUnInstallProcess(
+                event = Config.Events.UNINSTALL_EVENT,
                 packageName = "com.appgain.sdk.io"
         )
     }
 
 
+    fun install(view: View){
+        internalEventExecutorController.invokeInternalInstallProcess(
+                event = Config.Events.INSTALL_EVENT,
+                url = "https://cdn.appgain.io/docs/appgain/androidSDKtestapp/app-release.apk",
+                packageName = "com.appgain.sdk.io"
+        )
+    }
+
     fun wifion(view: View) {
-        mdmControllers.invokeInternalProcess(event = Config.Events.WIFI_EVENT_ON)
+
+        internalEventExecutorController.invokeInternalProcess(event = Config.Events.WIFI_EVENT_ON)
     }
     fun wifionOff(view: View) {
-        mdmControllers.invokeInternalProcess(event = Config.Events.WIFI_EVENT_OFF)
+        internalEventExecutorController.invokeInternalProcess(event = Config.Events.WIFI_EVENT_OFF)
     }
 
     fun dataon(view: View) {
-        mdmControllers.invokeInternalProcess(event = Config.Events.DATA_EVENT_ON)
+        internalEventExecutorController.invokeInternalProcess(event = Config.Events.DATA_EVENT_ON)
     }
     fun dataoff(view: View) {
-        mdmControllers.invokeInternalProcess(event = Config.Events.DATA_EVENT_OFF)
+        internalEventExecutorController.invokeInternalProcess(event = Config.Events.DATA_EVENT_OFF)
 
     }
     fun bluetoothon(view: View) {
-        mdmControllers.invokeInternalProcess(event = Config.Events.BLUETHOOTH_EVENT_ON)
+        internalEventExecutorController.invokeInternalProcess(event = Config.Events.BLUETHOOTH_EVENT_ON)
 
     }
     fun bluetoothOff(view: View) {
-        mdmControllers.invokeInternalProcess(event = Config.Events.BLUETHOOTH_EVENT_OFF)
+        internalEventExecutorController.invokeInternalProcess(event = Config.Events.BLUETHOOTH_EVENT_OFF)
     }
     fun nfcon(view: View) {
-        mdmControllers.invokeInternalProcess(event = Config.Events.NFC_EVENT_ON)
+        internalEventExecutorController.invokeInternalProcess(event = Config.Events.NFC_EVENT_ON)
 
     }
     fun nfcOff(view: View) {
-        mdmControllers.invokeInternalProcess(event = Config.Events.NFC_EVENT_OFF)
+        internalEventExecutorController.invokeInternalProcess(event = Config.Events.NFC_EVENT_OFF)
 
     }
     fun reboot(view: View) {
-        mdmControllers.invokeInternalProcess(event = Config.Events.REBOOT_EVENT)
+        internalEventExecutorController.invokeInternalProcess(event = Config.Events.REBOOT_EVENT)
 
     }
     fun poweroff(view: View) {
-        mdmControllers.invokeInternalProcess(event = Config.Events.POWERR_OFF_EVENT)
+        internalEventExecutorController.invokeInternalProcess(event = Config.Events.POWERR_OFF_EVENT)
     }
     fun location(view: View) {
     }
 
     fun locationoff(view: View) {
-        mdmControllers.invokeInternalProcess(event = Config.Events.LOCATION_EVENT_OFF)
+        internalEventExecutorController.invokeInternalProcess(event = Config.Events.LOCATION_EVENT_OFF)
     }
     fun locationon(view: View) {
-        mdmControllers.invokeInternalProcess(event = Config.Events.LOCATION_EVENT_ON)
+        internalEventExecutorController.invokeInternalProcess(event = Config.Events.LOCATION_EVENT_ON)
+        mdmInfoUseCase.invoke {
+            connection.text = it.locationStatus
+        }
 
     }
 
@@ -154,7 +162,7 @@ class MainActivity : AppCompatActivity() {
             .addDashLine()
             .printOnPaper()
 //        controller test
-        mdmControllers.invokeInternalPrintingProcess(event = Config.Events.PRINT_EVENT, printText = "controller test")
+        internalEventExecutorController.invokeInternalPrintingProcess(event = Config.Events.PRINT_EVENT, printText = "controller test")
 
     }
 }

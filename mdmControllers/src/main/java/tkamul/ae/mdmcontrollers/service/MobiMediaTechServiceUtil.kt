@@ -17,7 +17,8 @@ import java.lang.RuntimeException
 /**
  * class to get Media Tech interface for device operations like wifi , blutoothe , etc
  */
- class  MobiMediaTechServiceUtil(val context: Context) {
+ class
+MobiMediaTechServiceUtil(val context: Context) {
 
     private val mediatekRemoteServiceIntent = Intent("com.mediatek.settings.MyService.action")
 

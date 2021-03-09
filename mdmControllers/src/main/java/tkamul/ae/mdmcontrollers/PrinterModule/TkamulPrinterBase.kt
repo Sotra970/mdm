@@ -126,6 +126,7 @@ abstract class TkamulPrinterBase {
 
     /**
      * print queue on paper or throw runtime error
+     * @return last printed line status
      */
     @Throws(RuntimeException::class)
     fun printOnPaper(): LinePrintingStatus {
@@ -144,6 +145,7 @@ abstract class TkamulPrinterBase {
                     return printiSgtatus
                 }
             }
+
             // log printed lines
             Logger.logd("PrinterLines : $logLines")
             // clear queue

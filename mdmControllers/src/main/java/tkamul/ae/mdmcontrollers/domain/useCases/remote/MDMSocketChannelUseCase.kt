@@ -17,7 +17,15 @@ class MDMSocketChannelUseCase @Inject constructor(
 ){
     @Throws(Exception::class)
      fun  observe(serial : String , listener : SocketEventListener){
-        socket.observe(Config.MDM_SOCKET_CHANNEL , serial.trim().replace(" " ,""), listener )
+        serial.apply {
+            this.trim()
+            this.replace(" " ,"")
+            this.replace("]" ,"")
+            this.replace("[", "")
+            this.replace("[", "")
+            this.replace(" ", "")
+        }
+        socket.observe(Config.MDM_SOCKET_CHANNEL , serial, listener )
     }
     fun <P> send (payload : P , ack : Ack = Ack{}){
         val json = Gson().toJson(payload)
