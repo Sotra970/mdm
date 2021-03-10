@@ -12,12 +12,12 @@ class InternalEventExecutor @Inject constructor(
     /**
      * invoke usecase from UI ( for UI testing )
      */
-    fun invokeInternalInstallProcess(event: String , url: String? ,packageName: String?) {
+    fun invokeInternalInstallProcess(event: String , url: String?) {
         eventExecutorController.invokProcess(
                 NameValuePairs(
                         event = event ,
                         args = Args(
-                                NameValuePairsX(ray_id = "internal",url=url,packageName = packageName)
+                                NameValuePairsX(ray_id = "internal",url=url)
                         )
                 ))
     }

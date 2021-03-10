@@ -105,7 +105,6 @@ class EventExecutorController  @Inject constructor(
     private fun invokeInstallApk(pairs: NameValuePairs) {
         installApkController.invoke(
                 url = pairs.args.nameValuePairs.url!!,
-                packageName = pairs.args.nameValuePairs.packageName!!,
                 downloadStatusListener = {
                     sendInfoController.sendInstallStatusToSocket(pairs,it,false)
                 },

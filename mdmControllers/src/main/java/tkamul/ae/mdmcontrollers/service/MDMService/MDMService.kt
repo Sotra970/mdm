@@ -6,10 +6,13 @@ import android.content.Intent
 import android.os.IBinder
 import dagger.hilt.android.AndroidEntryPoint
 import tkamul.ae.mdmcontrollers.contollers.EventExecutorController
+import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.Args
+import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.DeviceInfo2SocketPayload
 import tkamul.ae.mdmcontrollers.data.gateways.socketgateway.SocketEventListener
 import tkamul.ae.mdmcontrollers.domain.core.Config
 import tkamul.ae.mdmcontrollers.domain.core.extentionFunction.toArgsResponse
 import tkamul.ae.mdmcontrollers.domain.entities.MDMInfo
+import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.MDMInfoUseCase
 import tkamul.ae.mdmcontrollers.domain.useCases.remote.MDMSocketChannelUseCase
 import javax.inject.Inject
 
@@ -22,6 +25,9 @@ class MDMService : Service() {
 
     @Inject
     lateinit var mdmSocketChannelUseCase: MDMSocketChannelUseCase
+    @Inject
+    lateinit var mdmInfoController: MDMInfoUseCase
+
 
     @Inject
     lateinit var eventExecutorController: EventExecutorController
@@ -39,7 +45,7 @@ class MDMService : Service() {
     private fun startListingOnSocketEvents(info: MDMInfo) {
         mdmSocketChannelUseCase.observe(info.deviceInfo.serial_number , object : SocketEventListener {
             override fun onConnect(args: Any) {
-//                sendDeviceInfo(info, )
+                sendDeviceInfo()
                 showNotification(Config.SericeNotification.MDM_NOTIFICATION_RUNNING_BODY)
             }
             override fun onDisconnect(vararg args: Any) {
@@ -51,14 +57,24 @@ class MDMService : Service() {
         })
     }
 
-   /* private fun sendDeviceInfo(info: MDMInfo, pairs:NameValuePairs) {
-        mdmSocketChannelUseCase.send(
-            DeviceInfo2SocketPayload(
-                    args = Args(pairs.args.nameValuePairs.ray_id),
-                    device = info,
+    private fun sendDeviceInfo() {
+        mdmInfoController.invoke {
+            mdmSocketChannelUseCase.send(DeviceInfo2SocketPayload(
+                    args = Args("onConnect"),
+                    device = it,
                     event = Config.Events.ON_CONNECT
             ))
-    }*/
+        }
+    }
+
+    /* private fun sendDeviceInfo(info: MDMInfo, pairs:NameValuePairs) {
+         mdmSocketChannelUseCase.send(
+             DeviceInfo2SocketPayload(
+                     args = Args(pairs.args.nameValuePairs.ray_id),
+                     device = info,
+                     event = Config.Events.ON_CONNECT
+             ))
+     }*/
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

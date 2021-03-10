@@ -19,7 +19,6 @@ import kotlin.properties.Delegates
 class DownloadUtils(
         private val context: Context,
         private val URL: String,
-        private val incomingFileName: String ,
         private val internal : Boolean
 ) {
     companion object{
@@ -31,8 +30,8 @@ class DownloadUtils(
          * @param internal default false : file will be  downloaded inside app directory
          * @param internal default true : file will be  downloaded inside public download directory
          */
-        fun enqueue(context: Context, url: String, packageName: String, internal : Boolean = false, downloadListener: DownloadListener): Long {
-            DownloadUtils(context, url, packageName , internal)
+        fun enqueue(context: Context, url: String, internal : Boolean = false, downloadListener: DownloadListener): Long {
+            DownloadUtils(context, url , internal)
                     .run {
                 val downloadRef = downloadMedia()
                 trackUpdates(downloadListener)
@@ -57,13 +56,13 @@ class DownloadUtils(
         //Set the title of this download, to be displayed in notifications (if enabled).
         request.setTitle("MDM Download Manger")
         //Set a description of this download, to be displayed in notifications (if enabled)
-        request.setDescription("Downloding $incomingFileName...")
+        request.setDescription("Downloding apk...")
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
         //Set the local destination for the downloaded file to a path within the application's external files directory
         if (internal)
-            request.setDestinationInExternalFilesDir(context , Environment.DIRECTORY_DOWNLOADS , incomingFileName)
+            request.setDestinationInExternalFilesDir(context , Environment.DIRECTORY_DOWNLOADS , System.currentTimeMillis().toString())
         else
-            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,incomingFileName)
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,System.currentTimeMillis().toString())
         //Enqueue a new download and same the referenceId
         downloadReference = ContextCompat.getSystemService(context, DownloadManager::class.java)!!
                 .enqueue(request)
@@ -135,13 +134,17 @@ class DownloadUtils(
     }
 
     private val timer: Timer = Timer()
-
+    val  statusList = mutableListOf<DownloadStatus>()
     /**
      * deliver download status every 1 sec
      */
     private fun  trackUpdates(downloadListener: DownloadListener){
         timer.schedule(0, 1000) {
-            downloadListener.deliverStatus(getStatus())
+            val status = getStatus()
+            if (!statusList.contains(status)){
+                statusList.add(status)
+                downloadListener.deliverStatus(status)
+            }
         }
     }
 

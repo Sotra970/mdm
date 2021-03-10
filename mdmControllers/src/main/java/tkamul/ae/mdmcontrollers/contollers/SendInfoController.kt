@@ -44,12 +44,13 @@ class SendInfoController @Inject constructor(
      */
     fun sendInstallStatusToSocket(pairs: NameValuePairs, installStatus: DownloadUtils.DownloadStatus?, installed:Boolean ) {
             mdmInfoController.invoke {
-                it.installedPackages = listOf()
-                mdmSocketChannelController.send(InstallInfo2SocketPayload(
+                it.apply {
+                    this.installStatus = installStatus
+                    this.installed = installed
+                }
+                mdmSocketChannelController.send(DeviceInfo2SocketPayload(
                         event = Config.Events.ON_CONNECT ,
                         device = it,
-                        downloadStatus=installStatus,
-                        installed=installed,
                         args = Args(pairs.args.nameValuePairs.ray_id)
                 ))
             }
@@ -60,7 +61,9 @@ class SendInfoController @Inject constructor(
      */
     fun sendUnInstallStatusToSocket(pairs: NameValuePairs, unInstalled:Boolean ) {
             mdmInfoController.invoke {
-                it.installedPackages = listOf()
+                it.apply {
+                    this.unInstalled = unInstalled
+                }
                 mdmSocketChannelController.send(UnInstallInfo2SocketPayload(
                         event = Config.Events.ON_CONNECT ,
                         device = it,

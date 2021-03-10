@@ -2,6 +2,7 @@ package tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases
 
 import android.content.Context
 import android.os.Build
+import android.telephony.TelephonyManager
 import org.json.JSONObject
 import tkamul.ae.mdmcontrollers.domain.core.Logger
 import tkamul.ae.mdmcontrollers.service.MobiMediaTechServiceUtil
@@ -47,7 +48,18 @@ class MDMInfoUseCase @Inject constructor(
                         bluetoothStatus = BluetoothUtil.getBluetoothAdapterState(context),
                         printerStatus = printerController.getPrinterStats(),
                         installedPackages = it.packageList.toPackageInfoList()
-                  )
+                  ).apply {
+                      if (deviceInfo.serial_number.trim().isEmpty()){
+                          val telephonyMgr = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+                          if (!telephonyMgr.deviceId.isEmpty())
+                          deviceInfo.serial_number = telephonyMgr.deviceId
+                          else if (!it.deviceInformation.sim1_imei.isEmpty())
+                              deviceInfo.serial_number =  it.deviceInformation.sim1_imei
+                          else if (!it.deviceInformation.sim2_imei.isEmpty())
+                              deviceInfo.serial_number =  it.deviceInformation.sim2_imei
+
+                      }
+                  }
               )
            }
     }
