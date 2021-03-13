@@ -9,6 +9,15 @@ import android.os.IBinder
 /**
  * Created by sotra@altakamul.tr on 3/13/2021.
  */
+/**
+ * class used to send complete event for command to mdmd Server
+ * usage :
+ *   MDMRemoteCommandServiceImplementer(
+ *   context = applicationContext
+ *   ) {
+ *   it.completeEvent(rayId ,eventId)
+ *   }
+ */
 class MDMRemoteCommandServiceImplementer(
     val context: Context ,
     val onServiceConnected :(MDMRemoteInterface)->Unit

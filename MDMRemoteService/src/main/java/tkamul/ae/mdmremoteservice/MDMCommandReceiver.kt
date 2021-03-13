@@ -7,10 +7,18 @@ import android.content.Intent
 /**
  * Created by sotra@altakamul.tr on 3/13/2021.
  */
+/**
+ *  MDMCommandReceiver.addSubscriber(object : MDMCommandReceiver.MDMServiceEventInterface {
+ *  override fun executeCommand(rayId: String, eventId: String) {
+ *  //doSomething
+ * //send complete event to mdm server
+ *  }
+ *  })
+ */
 class MDMCommandReceiver : BroadcastReceiver() {
 
-     val COMMAND_ID_KEY =  "COMMAND_ID_KEY"
-     val COMMAND_RAY_ID_KEY =  "COMMAND_RAY_ID"
+    private val COMMAND_ID_KEY =  "COMMAND_ID_KEY"
+     private val COMMAND_RAY_ID_KEY =  "COMMAND_RAY_ID"
 
 
     override fun onReceive(context: Context, intent: Intent) {
