@@ -9,7 +9,7 @@ import tkamul.ae.mdmremoteservice.MDMRemoteInterface
 class MDMServiceImplementer(
     val mdmServiceEventInterface :MDMServiceEventInterface
 ) : MDMRemoteInterface.Stub() {
-    override fun completeEvent(eventId: String?) {
-        mdmServiceEventInterface.completeEvent(eventId)
+    override fun completeEvent( rayId : String  , commandId: String) {
+        mdmServiceEventInterface.completeEvent(rayId , commandId)
     }
 }

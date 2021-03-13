@@ -5,7 +5,6 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.View
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -16,10 +15,8 @@ import tkamul.ae.mdmcontrollers.PrinterModule.models.textFormat.PrintTextDirctio
 import tkamul.ae.mdmcontrollers.PrinterModule.models.textFormat.PrinterTextScale
 import tkamul.ae.mdmcontrollers.contollers.InternalEventExecutor
 import tkamul.ae.mdmcontrollers.domain.core.Config
-import tkamul.ae.mdmcontrollers.domain.core.Logger
 import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.MDMInfoUseCase
 import javax.inject.Inject
-import kotlin.concurrent.thread
 
 
 @AndroidEntryPoint
@@ -47,6 +44,13 @@ class MainActivity : AppCompatActivity() {
             val deviceId: String = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID)
             connection.text = "serial_number : ${it.deviceInfo.serial_number.replace(" ","")} \n  deviceId:$deviceId"
         }
+    }
+
+    fun executeCommand(view: View){
+        internalEventExecutorController.invokeInternalExecuteRemoteCommand(
+            event = Config.Events.EXECUTE_REMOTE_COMMAND,
+            commandId= "TEST_COMMAND"
+        )
     }
 
     fun unInstall(view: View){

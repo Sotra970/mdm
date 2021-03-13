@@ -3,15 +3,12 @@ package tkamul.ae.mdmcontrollers.service.MDMService
 import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Intent
-import android.os.Binder
 import android.os.IBinder
-import dagger.hilt.android.AndroidEntryPoint
 import tkamul.ae.mdmcontrollers.contollers.EventExecutorController
 import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.Args
 import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.DeviceInfo2SocketPayload
 import tkamul.ae.mdmcontrollers.data.gateways.socketgateway.SocketEventListener
 import tkamul.ae.mdmcontrollers.domain.core.Config
-import tkamul.ae.mdmcontrollers.domain.core.Logger
 import tkamul.ae.mdmcontrollers.domain.core.extentionFunction.toArgsResponse
 import tkamul.ae.mdmcontrollers.domain.entities.MDMInfo
 import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.MDMInfoUseCase
@@ -40,9 +37,9 @@ class MDMService : Service()  , MDMServiceEventInterface {
     override fun onCreate() {
         super.onCreate()
         showNotification(Config.SericeNotification.MDM_NOTIFICATION_ATTACHED_BODY)
-       /* eventExecutorController.invokeMDMInfo {
+        eventExecutorController.invokeMDMInfo {
             startListingOnSocketEvents(it)
-        }*/
+        }
     }
 
 
@@ -67,19 +64,11 @@ class MDMService : Service()  , MDMServiceEventInterface {
             mdmSocketChannelUseCase.send(DeviceInfo2SocketPayload(
                     args = Args("onConnect"),
                     device = it,
-                    event = Config.Events.ON_CONNECT
+                    event = Config.Events.SET_DEVICE_INFO_EVENT
             ))
         }
     }
 
-    /* private fun sendDeviceInfo(info: MDMInfo, pairs:NameValuePairs) {
-         mdmSocketChannelUseCase.send(
-             DeviceInfo2SocketPayload(
-                     args = Args(pairs.args.nameValuePairs.ray_id),
-                     device = info,
-                     event = Config.Events.ON_CONNECT
-             ))
-     }*/
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -113,8 +102,17 @@ class MDMService : Service()  , MDMServiceEventInterface {
         startForeground(notificationId, notificationBuilder.build());
     }
 
-   override fun completeEvent(eventId: String?) {
-      Logger.logd(" eventId  $eventId")
+   override fun completeEvent(rayId : String  , eventId: String?) {
+      eventId?.let {
+          mdmInfoController.invoke {
+              it.executedEvent = eventId
+              mdmSocketChannelUseCase.send(DeviceInfo2SocketPayload(
+                  args = Args(rayId),
+                  device = it,
+                  event = Config.Events.SET_DEVICE_INFO_EVENT
+              ))
+          }
+      }
     }
 
 

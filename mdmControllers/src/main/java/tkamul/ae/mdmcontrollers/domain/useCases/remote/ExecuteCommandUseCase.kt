@@ -1,19 +1,21 @@
 package tkamul.ae.mdmcontrollers.domain.useCases.remote
 
-import com.google.gson.Gson
-import io.socket.client.Ack
-import org.json.JSONObject
-import tkamul.ae.mdmcontrollers.data.gateways.socketgateway.SocketEventListener
-import tkamul.ae.mdmcontrollers.data.gateways.socketgateway.SocketApiClientImplementer
+import android.content.Context
+import android.content.Intent
 import tkamul.ae.mdmcontrollers.domain.core.Config
-import tkamul.ae.mdmcontrollers.domain.core.Logger
 import javax.inject.Inject
 
 /**
  * Created by sotra@altakamul.tr on 2/17/2021.
  */
-class ExecuteCommandUseCase{
-    fun invoke(){
-
+class ExecuteCommandUseCase @Inject constructor(
+    val context: Context
+){
+    fun invoke(commandId :String , rayId:String){
+        context.sendBroadcast(Intent().apply {
+            action = Config.Events.REMOTE_COMMAND_RECEIVER
+            putExtra(Config.Events.COMMAND_ID_KEY,commandId)
+            putExtra(Config.Events.COMMAND_RAY_ID_KEY,commandId)
+        })
     }
 }

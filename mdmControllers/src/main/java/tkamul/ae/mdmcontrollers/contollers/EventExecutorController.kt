@@ -1,20 +1,12 @@
 package tkamul.ae.mdmcontrollers.contollers
-import tkamul.ae.mdmcontrollers.PrinterModule.models.config.LinePrintingStatus
 import tkamul.ae.mdmcontrollers.data.gateways.socketModels.argsResponse.NameValuePairs
-import tkamul.ae.mdmcontrollers.data.gateways.socketModels.argsResponse.NameValuePairsX
-import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.Args
-import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.DeviceInfo2SocketPayload
-import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.InstallInfo2SocketPayload
-import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.UnInstallInfo2SocketPayload
 import tkamul.ae.mdmcontrollers.domain.core.Config
-import tkamul.ae.mdmcontrollers.domain.core.DownloadUtils
 import tkamul.ae.mdmcontrollers.domain.entities.MDMInfo
 import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.PrintUseCase
 import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.*
 import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.InstallApkUsecase
-import tkamul.ae.mdmcontrollers.domain.useCases.remote.MDMSocketChannelUseCase
+import tkamul.ae.mdmcontrollers.domain.useCases.remote.ExecuteCommandUseCase
 import javax.inject.Inject
-import kotlin.concurrent.thread
 
 /**
  * Created by sotra@altakamul.tr on 2/17/2021.
@@ -40,6 +32,7 @@ class EventExecutorController  @Inject constructor(
         val printController : PrintUseCase,
         val installApkController : InstallApkUsecase,
         val unInstallApkController : UnInstallApkUsecase,
+        val executeCommandUseCase: ExecuteCommandUseCase ,
         val sendInfoController: SendInfoController
 ){
 
@@ -97,8 +90,17 @@ class EventExecutorController  @Inject constructor(
                     invokeUnInstallApk(pairs)
                 }
 
+                Config.Events.EXECUTE_REMOTE_COMMAND -> {
+                    invokeExcecuteRemoteCommand(pairs)
+                }
+
             }
     }
+
+    private fun invokeExcecuteRemoteCommand(pairs: NameValuePairs) {
+        executeCommandUseCase.invoke(pairs.args.nameValuePairs.commandId!!,pairs.args.nameValuePairs.ray_id)
+    }
+
     /**
      * invoke print use case
      */

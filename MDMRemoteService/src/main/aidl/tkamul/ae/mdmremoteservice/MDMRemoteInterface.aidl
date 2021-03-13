@@ -5,5 +5,5 @@ package tkamul.ae.mdmremoteservice;
 
 
 interface MDMRemoteInterface {
-     void  completeEvent(String eventId ) ;
+     void  completeEvent( String rayId  , String commandId ) ;
 }

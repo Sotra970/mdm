@@ -4,7 +4,6 @@ import tkamul.ae.mdmcontrollers.PrinterModule.models.config.LinePrintingStatus
 import tkamul.ae.mdmcontrollers.data.gateways.socketModels.argsResponse.NameValuePairs
 import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.Args
 import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.DeviceInfo2SocketPayload
-import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.InstallInfo2SocketPayload
 import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.UnInstallInfo2SocketPayload
 import tkamul.ae.mdmcontrollers.domain.core.Config
 import tkamul.ae.mdmcontrollers.domain.core.DownloadUtils
@@ -33,7 +32,7 @@ class SendInfoController @Inject constructor(
                 mdmSocketChannelController.send(DeviceInfo2SocketPayload(
                         args = Args(pairs.args.nameValuePairs.ray_id),
                         device = it,
-                        event = Config.Events.ON_CONNECT
+                        event = Config.Events.SET_DEVICE_INFO_EVENT
                 ))
             }
         }
@@ -49,7 +48,7 @@ class SendInfoController @Inject constructor(
                     this.installed = installed
                 }
                 mdmSocketChannelController.send(DeviceInfo2SocketPayload(
-                        event = Config.Events.ON_CONNECT ,
+                        event = Config.Events.SET_DEVICE_INFO_EVENT ,
                         device = it,
                         args = Args(pairs.args.nameValuePairs.ray_id)
                 ))
@@ -65,7 +64,7 @@ class SendInfoController @Inject constructor(
                     this.unInstalled = unInstalled
                 }
                 mdmSocketChannelController.send(UnInstallInfo2SocketPayload(
-                        event = Config.Events.ON_CONNECT ,
+                        event = Config.Events.SET_DEVICE_INFO_EVENT ,
                         device = it,
                         unInstalled=unInstalled,
                         args = Args(pairs.args.nameValuePairs.ray_id)
@@ -83,7 +82,7 @@ class SendInfoController @Inject constructor(
                 mdmSocketChannelController.send(DeviceInfo2SocketPayload(
                         args = Args(pairs.args.nameValuePairs.ray_id),
                         device = it,
-                        event = Config.Events.ON_CONNECT
+                        event = Config.Events.SET_DEVICE_INFO_EVENT
                 ))
             }
     }

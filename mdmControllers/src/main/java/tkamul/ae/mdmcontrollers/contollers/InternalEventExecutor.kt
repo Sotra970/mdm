@@ -25,6 +25,19 @@ class InternalEventExecutor @Inject constructor(
     /**
      * invoke usecase from UI ( for UI testing )
      */
+    fun invokeInternalExecuteRemoteCommand(event: String  , commandId :String ) {
+        eventExecutorController.invokProcess(
+            NameValuePairs(
+                event = event ,
+                args = Args(
+                    NameValuePairsX(ray_id = "internal",commandId = commandId)
+                )
+            ))
+    }
+
+    /**
+     * invoke usecase from UI ( for UI testing )
+     */
     fun invokeInternalUnInstallProcess(event: String  ,packageName: String?) {
         eventExecutorController.invokProcess(
                 NameValuePairs(

@@ -24,15 +24,14 @@
             android:textSize="14dp" />
     </ScrollView>
 
-    <!--printing , installing-->
-
+    <!-- printing , excecuteCommand-->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/print_holder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        app:layout_constraintBottom_toTopOf="@id/wifi_holder"
+        app:layout_constraintBottom_toTopOf="@id/install_holder"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/connectionHolder">
@@ -46,8 +45,34 @@
             android:text="print"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/install"
+            app:layout_constraintRight_toLeftOf="@+id/execute"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/execute"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:onClick="executeCommand"
+            android:text="send command"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/print"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- installing-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/install_holder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintBottom_toTopOf="@id/wifi_holder"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/print_holder">
+
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/install"
@@ -58,7 +83,7 @@
             android:onClick="install"
             android:text="install"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/print"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@id/UnInstall"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -68,13 +93,14 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:onClick="unInstall"
-            android:text="install"
+            android:text="uninstall"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@+id/install"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
     <!--    wifi-->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/wifi_holder"
@@ -85,7 +111,7 @@
         app:layout_constraintBottom_toTopOf="@id/data_holder"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/print_holder">
+        app:layout_constraintTop_toBottomOf="@id/install_holder">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/wifi_on"

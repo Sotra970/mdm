@@ -15,6 +15,7 @@ data class  MDMInfo(
         var installedPackages: List<PackageInfo>,
         val printerStatus: DevicePrinterStatus
 ) {
+    var executedEvent: String?=null
     var unInstalled: Boolean? = null
     var installed: Boolean? = null
      var installStatus: DownloadUtils.DownloadStatus?=null

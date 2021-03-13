@@ -10,6 +10,7 @@ import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.PrintUseCase
 import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.*
 import tkamul.ae.mdmcontrollers.domain.core.KeyStoreUtils
 import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.InstallApkUsecase
+import tkamul.ae.mdmcontrollers.domain.useCases.remote.ExecuteCommandUseCase
 import tkamul.ae.mdmcontrollers.service.MobiMediaTechServiceUtil
 import javax.inject.Singleton
 
@@ -19,6 +20,11 @@ import javax.inject.Singleton
 @InstallIn(ApplicationComponent::class)
 @Module
 class ControllersUsecasesModule {
+
+    @Provides
+    fun provideExecuteCommandUseCaseController(@ApplicationContext context:Context): ExecuteCommandUseCase {
+        return ExecuteCommandUseCase(context)
+    }
 
     @Provides
     fun providePrintController(@ApplicationContext context:Context): PrintUseCase {
