@@ -21,7 +21,10 @@ class PrintUseCase @Inject constructor(
      fun invoke(text : String):LinePrintingStatus{
         return TkamulPrinterFactory.getTkamulPrinter(context)
             .addEmptyLine()
+            .addEmptyLine()
+            .addEmptyLine()
             .addText(text)
+            .addEmptyLine()
             .addEmptyLine()
             .addEmptyLine()
             .printOnPaper()

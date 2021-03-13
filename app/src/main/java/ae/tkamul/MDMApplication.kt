@@ -2,7 +2,6 @@ package ae.tkamul
 
 import android.app.Application
 import android.content.Intent
-import android.os.Build
 import androidx.core.content.ContextCompat
 import androidx.multidex.MultiDex
 import dagger.hilt.android.HiltAndroidApp

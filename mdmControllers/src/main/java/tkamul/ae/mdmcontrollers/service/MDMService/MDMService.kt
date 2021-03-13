@@ -3,6 +3,7 @@ package tkamul.ae.mdmcontrollers.service.MDMService
 import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Intent
+import android.os.Binder
 import android.os.IBinder
 import dagger.hilt.android.AndroidEntryPoint
 import tkamul.ae.mdmcontrollers.contollers.EventExecutorController
@@ -10,18 +11,16 @@ import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.Args
 import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.DeviceInfo2SocketPayload
 import tkamul.ae.mdmcontrollers.data.gateways.socketgateway.SocketEventListener
 import tkamul.ae.mdmcontrollers.domain.core.Config
+import tkamul.ae.mdmcontrollers.domain.core.Logger
 import tkamul.ae.mdmcontrollers.domain.core.extentionFunction.toArgsResponse
 import tkamul.ae.mdmcontrollers.domain.entities.MDMInfo
 import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.MDMInfoUseCase
 import tkamul.ae.mdmcontrollers.domain.useCases.remote.MDMSocketChannelUseCase
 import javax.inject.Inject
 
-@AndroidEntryPoint
-class MDMService : Service() {
+class MDMService : Service()  , MDMServiceEventInterface {
     private var startMode: Int = START_REDELIVER_INTENT // indicates how to behave if the service is killed
     private var allowRebind: Boolean = true   // indicates whether onRebind should be used
-    private var mdmdBinderImplemnter : MDMBinderImplemnter =
-        MDMBinderImplemnter() // TODO(implement consumer outsource methods )
 
     @Inject
     lateinit var mdmSocketChannelUseCase: MDMSocketChannelUseCase
@@ -32,12 +31,18 @@ class MDMService : Service() {
     @Inject
     lateinit var eventExecutorController: EventExecutorController
 
+
+    val mdmServiceImplementer = MDMServiceImplementer(this)
+
+
+
+
     override fun onCreate() {
         super.onCreate()
         showNotification(Config.SericeNotification.MDM_NOTIFICATION_ATTACHED_BODY)
-        eventExecutorController.invokeMDMInfo {
+       /* eventExecutorController.invokeMDMInfo {
             startListingOnSocketEvents(it)
-        }
+        }*/
     }
 
 
@@ -82,8 +87,8 @@ class MDMService : Service() {
         return startMode
     }
     // A client is binding to the service with bindService()
-    override fun onBind(intent: Intent): IBinder? {
-        return mdmdBinderImplemnter.asBinder()
+    override fun onBind(intent: Intent): IBinder {
+        return mdmServiceImplementer
     }
 
     override fun onUnbind(intent: Intent): Boolean {
@@ -106,6 +111,10 @@ class MDMService : Service() {
             )
         val notificationId = System.currentTimeMillis().toInt()
         startForeground(notificationId, notificationBuilder.build());
+    }
+
+   override fun completeEvent(eventId: String?) {
+      Logger.logd(" eventId  $eventId")
     }
 
 

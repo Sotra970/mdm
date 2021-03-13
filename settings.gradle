@@ -1,3 +1,5 @@
+include ':MDMRemoteService'
+include ':MDMServiceBinder'
 include ':mdmControllers'
 include ':app'
 rootProject.name = "mdm"
