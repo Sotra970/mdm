@@ -43,58 +43,62 @@ class EventExecutorController  @Inject constructor(
      * event router : routing from a string event come from socket to a use case
      */
     fun invokProcess(pairs : NameValuePairs) {
-            when(pairs.event){
-                Config.Events.WIFI_EVENT_ON -> {
-                        invokeWifi( true,pairs)
-                }
-                Config.Events.WIFI_EVENT_OFF -> {
-                    invokeWifi( false,pairs)
-                }
-                Config.Events.DATA_EVENT_ON -> {
-                    invokedata( true,pairs)
-                }
-                Config.Events.DATA_EVENT_OFF -> {
-                    invokedata( false,pairs)
-                }
-                Config.Events.BLUETHOOTH_EVENT_ON -> {
-                    invokeBluetooth( true,pairs)
-                }
-                Config.Events.BLUETHOOTH_EVENT_OFF -> {
-                    invokeBluetooth( false,pairs)
-                }
-                Config.Events.NFC_EVENT_ON -> {
-                    invokeNFC( true,pairs)
-                }
-                Config.Events.NFC_EVENT_OFF -> {
-                    invokeNFC( false,pairs)
-                }
-                Config.Events.REBOOT_EVENT -> {
-                   rebootController.invoke()
-                }
-                Config.Events.POWERR_OFF_EVENT -> {
-                    shutdownController.invoke()
-                }
-                Config.Events.LOCATION_EVENT_ON -> {
-                    invokeLocation( true,pairs)
-                }
-                Config.Events.LOCATION_EVENT_OFF -> {
-                    invokeLocation( false,pairs)
-                }
-                Config.Events.PRINT_EVENT -> {
-                    invokePrint(pairs)
-                }
-                Config.Events.INSTALL_EVENT -> {
-                    invokeInstallApk(pairs)
-                }
-                Config.Events.UNINSTALL_EVENT -> {
-                    invokeUnInstallApk(pairs)
-                }
+         kotlin.runCatching {
+             when(pairs.event){
+                 Config.Events.WIFI_EVENT_ON -> {
+                     invokeWifi( true,pairs)
+                 }
+                 Config.Events.WIFI_EVENT_OFF -> {
+                     invokeWifi( false,pairs)
+                 }
+                 Config.Events.DATA_EVENT_ON -> {
+                     invokedata( true,pairs)
+                 }
+                 Config.Events.DATA_EVENT_OFF -> {
+                     invokedata( false,pairs)
+                 }
+                 Config.Events.BLUETHOOTH_EVENT_ON -> {
+                     invokeBluetooth( true,pairs)
+                 }
+                 Config.Events.BLUETHOOTH_EVENT_OFF -> {
+                     invokeBluetooth( false,pairs)
+                 }
+                 Config.Events.NFC_EVENT_ON -> {
+                     invokeNFC( true,pairs)
+                 }
+                 Config.Events.NFC_EVENT_OFF -> {
+                     invokeNFC( false,pairs)
+                 }
+                 Config.Events.REBOOT_EVENT -> {
+                     rebootController.invoke()
+                 }
+                 Config.Events.POWERR_OFF_EVENT -> {
+                     shutdownController.invoke()
+                 }
+                 Config.Events.LOCATION_EVENT_ON -> {
+                     invokeLocation( true,pairs)
+                 }
+                 Config.Events.LOCATION_EVENT_OFF -> {
+                     invokeLocation( false,pairs)
+                 }
+                 Config.Events.PRINT_EVENT -> {
+                     invokePrint(pairs)
+                 }
+                 Config.Events.INSTALL_EVENT -> {
+                     invokeInstallApk(pairs)
+                 }
+                 Config.Events.UNINSTALL_EVENT -> {
+                     invokeUnInstallApk(pairs)
+                 }
 
-                Config.Events.EXECUTE_REMOTE_COMMAND -> {
-                    invokeExcecuteRemoteCommand(pairs)
-                }
+                 Config.Events.EXECUTE_REMOTE_COMMAND -> {
+                     invokeExcecuteRemoteCommand(pairs)
+                 }
 
-            }
+             }
+         }.onFailure {
+             // TODO: 3/14/2021  send error to socket
+         }
     }
 
     private fun invokeExcecuteRemoteCommand(pairs: NameValuePairs) {
@@ -131,8 +135,10 @@ class EventExecutorController  @Inject constructor(
      * invoke print use case
      */
     private fun invokePrint(pairs: NameValuePairs) {
-        val lastLineStatus = printController.invoke(pairs.args.nameValuePairs.printText?:"null")
-        sendInfoController.setPrintStatusToSocket(pairs , lastLineStatus)
+        printController.invoke(pairs.args.nameValuePairs.printText?:"null"){ lastLineStatus->
+            sendInfoController.setPrintStatusToSocket(pairs , lastLineStatus)
+        }
+
     }
 
     /**

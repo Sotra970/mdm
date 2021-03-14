@@ -2,6 +2,8 @@ package tkamul.ae.mdmcontrollers.PrinterModule
 
 import android.graphics.Bitmap
 import android.os.Build
+import androidx.annotation.UiThread
+import kotlinx.coroutines.*
 import tkamul.ae.mdmcontrollers.PrinterModule.core.LineUtils
 import tkamul.ae.mdmcontrollers.PrinterModule.models.config.LinePrintingStatus
 import tkamul.ae.mdmcontrollers.PrinterModule.models.config.DevicePrinterStatus
@@ -22,8 +24,12 @@ import java.util.*
  * Created by sotra@altakamul.tr on 3/1/2021.
  */
 abstract class TkamulPrinterBase {
-    private var printQueue: Queue<TkamulPrintingData> = ArrayDeque()
 
+    private val parentJob = Job()
+    private val coroutineScope = CoroutineScope(Dispatchers.Main + parentJob)
+
+    private var printQueue: Queue<TkamulPrintingData> = ArrayDeque()
+    private  var  isSeparateTextToLinesEnabled = false
     /**
      * setup child printer
      */
@@ -42,11 +48,13 @@ abstract class TkamulPrinterBase {
     /**
      * make printer child  print text model
      */
+    @UiThread
     protected abstract fun PrintTextOnPaper(tkamulPrinterTextModel : TkamulPrinterTextModel) : LinePrintingStatus
 
     /**
      * make printer child  print image model
      */
+    @UiThread
     protected abstract fun PrintImageOnPaper(tkamulPrinterImageModel : TkamulPrinterImageModel) : LinePrintingStatus
 
     /**
@@ -54,7 +62,13 @@ abstract class TkamulPrinterBase {
      */
     protected abstract fun endingPrinterChild()
 
-
+    /**
+     *  disable / enable text separation to lines
+     */
+    fun separateTextToLines( enabled : Boolean) : TkamulPrinterBase {
+        isSeparateTextToLinesEnabled = enabled
+        return this
+    }
     /**
      * add text with format : align , diricion size
      * @param scale : text size default : normal
@@ -62,14 +76,23 @@ abstract class TkamulPrinterBase {
      * @param diriction : text diriction [RTL , LTR]  default : LTR
      */
     fun  addText(text: String, scale: PrinterTextScale = PrinterTextScale.normal, align: PrintTextAlign = PrintTextAlign.LEFT, diriction: PrintTextDirction = PrintTextDirction.LTR):TkamulPrinterBase{
-      for ( child in LineUtils.convertTextToLine(text,getMaxCharCountInLine())){
-          printQueue.add(TkamulPrinterTextModel().apply {
-              this.scale = scale
-              this.dirction = diriction
-              this.text = child
-              this.align = align
-          })
-      }
+        if (isSeparateTextToLinesEnabled){
+            for ( child in LineUtils.convertTextToLine(text,getMaxCharCountInLine())){
+                printQueue.add(TkamulPrinterTextModel().apply {
+                    this.scale = scale
+                    this.dirction = diriction
+                    this.text = child
+                    this.align = align
+                })
+            }
+        }else{
+            printQueue.add(TkamulPrinterTextModel().apply {
+                this.scale = scale
+                this.dirction = diriction
+                this.text = text
+                this.align = align
+            })
+        }
         return this
     }
 
@@ -129,39 +152,48 @@ abstract class TkamulPrinterBase {
      * @return last printed line status
      */
     @Throws(RuntimeException::class)
-    fun printOnPaper(): LinePrintingStatus {
-        var printiSgtatus =  LinePrintingStatus()
-        setup()
-        if (getPrinterStatus().isReady){
-            // builder to loog queue text
-            var logLines =StringBuilder()
-            // loop on queue and call responsible method to print on paper to print text or image  :  printTkamulPrintingDataOnPaper()
-            for (tkamulPrintingData in printQueue){
-                printiSgtatus = printTkamulPrintingDataOnPaper(tkamulPrintingData,logLines)
-                if (!printiSgtatus.printed){
-                    Logger.logd("PrinterLines : $logLines")
-                    // clear queue
-                    printQueue.clear()
-                    return printiSgtatus
-                }
-            }
-
-            // log printed lines
-            Logger.logd("PrinterLines : $logLines")
-            // clear queue
-            printQueue.clear()
-            // ending printer to save voltage
-            endingPrinterChild()
-            // return success printing
-            return printiSgtatus
-        }else{
-            // printer have an issue(out of paper or temperature ) before printing
-            val notReadyPrinterStatus = getPrinterStatus().status
-            printQueue.clear()
-            return printiSgtatus.apply {
-                errorMessage = notReadyPrinterStatus
+     fun printOnPaper(result : (LinePrintingStatus)->Unit){
+       coroutineScope.launch(Dispatchers.Main){
+            setup()
+            if (getPrinterStatus().isReady){
+                // print and return last printed line status
+                 result(processQueue().await())
+            }else{
+                printQueue.clear()
+                // printer have an issue(out of paper or temperature ) before printing
+              result(LinePrintingStatus().apply {
+                    errorMessage = getPrinterStatus().status
+                })
             }
         }
+    }
+    // loop on queue
+    // call responsible method to print on paper to print text or image  :  printTkamulPrintingDataOnPaper()
+    // log printed lines
+    // clear queue
+    // finish printer
+    private suspend fun processQueue(): Deferred<LinePrintingStatus> = coroutineScope.async(Dispatchers.Default){
+        // builder to loog queue text
+        var logLines =StringBuilder()
+        // get last printed line status
+        var lastPrintedLineStatus =  LinePrintingStatus()
+        for (tkamulPrintingData in printQueue){
+            lastPrintedLineStatus = printTkamulPrintingDataOnPaper(tkamulPrintingData,logLines).await()
+            if (!lastPrintedLineStatus.printed){
+                Logger.logd("PrinterLines : $logLines")
+                // clear queue
+                printQueue.clear()
+                return@async lastPrintedLineStatus
+            }
+        }
+        // log printed lines
+        Logger.logd("PrinterLines : $logLines")
+        // clear queue
+        printQueue.clear()
+        // ending printer to save voltage
+        endingPrinterChild()
+        // return last printed line status
+        return@async lastPrintedLineStatus
     }
 
 
@@ -169,7 +201,8 @@ abstract class TkamulPrinterBase {
      * method to print on paper to print text or image
      * @return  LinePrintingStatus obj
      */
-    private fun printTkamulPrintingDataOnPaper(tkamulPrintingData: TkamulPrintingData , logLines :StringBuilder) : LinePrintingStatus{
+    @UiThread
+    private suspend fun printTkamulPrintingDataOnPaper(tkamulPrintingData: TkamulPrintingData, logLines :StringBuilder) : Deferred<LinePrintingStatus> = coroutineScope.async(Dispatchers.Main){
         var linePrintingStatus = LinePrintingStatus()
         when(tkamulPrintingData){
             // printing text
@@ -180,7 +213,7 @@ abstract class TkamulPrinterBase {
                     it.append("LinePrintingStatus $linePrintingStatus")
                     it.append("/n")
                 }
-                return linePrintingStatus
+                return@async linePrintingStatus
             }
             //printing image
             is TkamulPrinterImageModel->{
@@ -190,10 +223,10 @@ abstract class TkamulPrinterBase {
                     it.append("PrintingStatus $linePrintingStatus")
                     it.append("/n")
                 }
-                return linePrintingStatus
+                return@async linePrintingStatus
             }
         }
-        return linePrintingStatus
+        return@async linePrintingStatus
     }
 
 

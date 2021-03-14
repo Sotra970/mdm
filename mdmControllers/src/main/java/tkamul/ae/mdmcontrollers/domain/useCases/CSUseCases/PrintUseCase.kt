@@ -18,8 +18,8 @@ class PrintUseCase @Inject constructor(
      * return printing status
      */
     @Throws(RuntimeException::class)
-     fun invoke(text : String):LinePrintingStatus{
-        return TkamulPrinterFactory.getTkamulPrinter(context)
+     fun invoke(text : String , resultCallback : (LinePrintingStatus)->Unit){
+        TkamulPrinterFactory.getTkamulPrinter(context)
             .addEmptyLine()
             .addEmptyLine()
             .addEmptyLine()
@@ -27,8 +27,9 @@ class PrintUseCase @Inject constructor(
             .addEmptyLine()
             .addEmptyLine()
             .addEmptyLine()
-            .printOnPaper()
+            .printOnPaper(resultCallback)
     }
+    @Throws(RuntimeException::class)
     fun  getPrinterStats(): DevicePrinterStatus {
         return TkamulPrinterFactory.getTkamulPrinter(context).getPrinterStatus()
     }

@@ -16,7 +16,7 @@ import tkamul.ae.mdmcontrollers.service.MDMService.MDMService
     override fun onCreate() {
         super.onCreate()
         MultiDex.install(this)
-        startMDMService()
+//        startMDMService()
     }
 
     // start mdm service to sync with socket channel and controllers

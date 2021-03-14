@@ -22,12 +22,13 @@ MobiMediaTechServiceUtil(val context: Context) {
 
     private val mediatekRemoteServiceIntent = Intent("com.mediatek.settings.MyService.action")
 
+    @Throws(RuntimeException::class)
     fun getGoInterface(onServiceConnected :(CSAndoridGo)->Unit ){
        bindRemoteService {
            onServiceConnected(CSAndoridGo.Stub.asInterface(it))
        }
     }
-
+    @Throws(RuntimeException::class)
     fun getQInterface(onServiceConnected :(CsApiAndroidQ)->Unit ){
         bindRemoteService {
             onServiceConnected(CsApiAndroidQ.Stub.asInterface(it))
@@ -35,6 +36,7 @@ MobiMediaTechServiceUtil(val context: Context) {
     }
 
     // function to get androidQ or androidgo interface
+    @Throws(RuntimeException::class)
      fun bindRemoteService(onServiceConnected :(IBinder)->Unit ){
         val intent = Intent()
         intent.action = "com.mediatek.settings.MyService.action" //若修改了清单文件，一定要重启手机！
@@ -68,6 +70,7 @@ MobiMediaTechServiceUtil(val context: Context) {
         throw Exception( "cant find service match [${mediatekRemoteServiceIntent.action}]")
     }
 
+    @Throws(RuntimeException::class)
     private fun geMediaTechConnectionListener(onServiceConnected :  ( serviceInterface: IBinder)->Unit = {} ): ServiceConnection {
         return object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName, serviceInterface: IBinder) {

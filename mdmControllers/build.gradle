@@ -71,4 +71,6 @@ dependencies {
     api 'com.google.code.gson:gson:2.8.6'
 
     implementation files('libs/com.nbbse.mobiprint3-v0.5.jar')
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9'
 }

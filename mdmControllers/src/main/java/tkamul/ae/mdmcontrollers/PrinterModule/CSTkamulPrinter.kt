@@ -17,10 +17,13 @@ import tkamul.ae.mdmcontrollers.domain.core.Logger
  */
 class CSTkamulPrinter( val context: Context) : TkamulPrinterBase() {
 
+    private val setup: Boolean = false
+
     /**
      *  {@inheritDoc}
      */
     override fun setup() {
+        if (!setup)
         PrinterServiceUtil.bindService(context)
     }
 
@@ -33,6 +36,7 @@ class CSTkamulPrinter( val context: Context) : TkamulPrinterBase() {
      *
      */
     override fun getPrinterStatus(): DevicePrinterStatus {
+        setup()
         val printerStatus = CsPrinter.getPrinterStatus()
         Logger.logd("printerStatus $printerStatus")
         if (printerStatus == 1){
@@ -46,7 +50,6 @@ class CSTkamulPrinter( val context: Context) : TkamulPrinterBase() {
         } else {
             return DevicePrinterStatus("The printer status is unknown, please contact support" , false)
         }
-
     }
 
 

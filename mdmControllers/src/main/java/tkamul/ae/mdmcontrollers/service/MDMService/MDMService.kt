@@ -31,7 +31,7 @@ class MDMService : Service()  , MDMServiceEventInterface {
     lateinit var eventExecutorController: EventExecutorController
 
 
-    val mdmServiceImplementer = MDMServiceImplementer(this)
+    private val mdmServiceImplementer = MDMServiceImplementer(this)
 
 
 
@@ -39,8 +39,12 @@ class MDMService : Service()  , MDMServiceEventInterface {
     override fun onCreate() {
         super.onCreate()
         showNotification(Config.SericeNotification.MDM_NOTIFICATION_ATTACHED_BODY)
-        eventExecutorController.invokeMDMInfo {
-            startListingOnSocketEvents(it)
+        kotlin.runCatching {
+          eventExecutorController.invokeMDMInfo {
+              startListingOnSocketEvents(it)
+          }
+        }.onFailure {
+          showNotification(it.toString() , 404)
         }
     }
 
@@ -62,13 +66,17 @@ class MDMService : Service()  , MDMServiceEventInterface {
     }
 
     private fun sendDeviceInfo() {
-        mdmInfoController.invoke {
-            mdmSocketChannelUseCase.send(DeviceInfo2SocketPayload(
-                    args = Args("onConnect"),
-                    device = it,
-                    event = Config.Events.SET_DEVICE_INFO_EVENT
-            ))
-        }
+       kotlin.runCatching {
+           mdmInfoController.invoke {
+               mdmSocketChannelUseCase.send(DeviceInfo2SocketPayload(
+                   args = Args("onConnect"),
+                   device = it,
+                   event = Config.Events.SET_DEVICE_INFO_EVENT
+               ))
+           }
+       }.onFailure {
+           showNotification(it.toString() , 404)
+       }
     }
 
 
@@ -93,14 +101,13 @@ class MDMService : Service()  , MDMServiceEventInterface {
     }
 
 
-    fun showNotification(message : String ) {
+    fun showNotification(message : String , notificationId: Int = System.currentTimeMillis().toInt() ) {
         val notificationBuilder =
             MDMServiceNotification.getNotificationBuilder(
                 this,
                 title = Config.SericeNotification.MDM_NOTIFICATION_TITLE,
                 body = message
             )
-        val notificationId = System.currentTimeMillis().toInt()
         startForeground(notificationId, notificationBuilder.build());
     }
 
