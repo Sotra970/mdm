@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
+import dagger.hilt.android.AndroidEntryPoint
 import tkamul.ae.mdmcontrollers.contollers.EventExecutorController
 import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.Args
 import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.DeviceInfo2SocketPayload
@@ -15,6 +16,7 @@ import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.MDMInfoUseCase
 import tkamul.ae.mdmcontrollers.domain.useCases.remote.MDMSocketChannelUseCase
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class MDMService : Service()  , MDMServiceEventInterface {
     private var startMode: Int = START_REDELIVER_INTENT // indicates how to behave if the service is killed
     private var allowRebind: Boolean = true   // indicates whether onRebind should be used

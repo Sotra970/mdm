@@ -15,7 +15,10 @@ class ExecuteCommandUseCase @Inject constructor(
         context.sendBroadcast(Intent().apply {
             action = Config.Events.REMOTE_COMMAND_RECEIVER
             putExtra(Config.Events.COMMAND_ID_KEY,commandId)
-            putExtra(Config.Events.COMMAND_RAY_ID_KEY,commandId)
+            putExtra(Config.Events.COMMAND_RAY_ID_KEY,rayId)
+        }.also {
+            it.putExtra(Config.Events.COMMAND_ID_KEY,commandId)
+            it.putExtra(Config.Events.COMMAND_RAY_ID_KEY,rayId)
         })
     }
 }
