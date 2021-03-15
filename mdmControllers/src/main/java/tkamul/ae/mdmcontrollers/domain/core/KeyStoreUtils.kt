@@ -24,7 +24,7 @@ class KeyStoreUtils(
     }
 
     private fun invokeRestAndroidApiLevelSenario() {
-        mobiMediaTechServiceUtil.getGoInterface { goInterface->
+        mobiMediaTechServiceUtil.getGoInterface({ goInterface->
             val pm  = context.getPackageManager()
             getSignatures(pm , context.packageName)?.let {
                 for (sig in it ){
@@ -32,11 +32,11 @@ class KeyStoreUtils(
                     goInterface.addKeystoreToList(sig)
                 }
             }
-        }
+        })
     }
 
     private fun invokeAndroidQSenario() {
-        mobiMediaTechServiceUtil.getQInterface { qInterface->
+        mobiMediaTechServiceUtil.getQInterface( { qInterface->
             val pm  = context.getPackageManager()
             getSignatures(pm , context.packageName)?.let {
                 for (sig in it ){
@@ -44,7 +44,7 @@ class KeyStoreUtils(
                     qInterface.addKeystoreToList(sig)
                 }
             }
-        }
+        })
     }
 
     private fun getSignatures(pm: PackageManager, packageName: String): List<ByteArray>? {

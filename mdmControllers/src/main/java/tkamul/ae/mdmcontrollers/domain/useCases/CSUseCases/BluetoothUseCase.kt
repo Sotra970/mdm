@@ -49,26 +49,26 @@ class BluetoothUseCase @Inject constructor(
         enable: Boolean,
         onFinish: () -> Unit
     ) {
-           mobiMediaTechServiceUtil.getGoInterface {
+           mobiMediaTechServiceUtil.getGoInterface({
                if (enable){
                    it.enableBluetooth()
                }else{
                    it.disableBluetooth()
                }
                onFinish()
-           }
+           })
     }
 
     @Throws(RuntimeException::class)
     private fun invokeAndroidQSenario(enable: Boolean, onFinish: () -> Unit) {
-        mobiMediaTechServiceUtil.getQInterface {
+        mobiMediaTechServiceUtil.getQInterface ({
             if (enable){
                 it.enableBluetooth()
             }else{
                 it.disableBluetooth()
             }
             onFinish()
-        }
+        })
     }
 
 

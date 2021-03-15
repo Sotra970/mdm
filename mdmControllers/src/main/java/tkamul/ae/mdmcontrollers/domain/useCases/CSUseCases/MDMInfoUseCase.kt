@@ -37,7 +37,7 @@ class MDMInfoUseCase @Inject constructor(
 
     @Throws(RuntimeException::class)
     private fun invokeRestAndroidApiLevelSenario(getMDMInfo: (MDMInfo) -> Unit) {
-           mobiMediaTechServiceUtil.getGoInterface {
+           mobiMediaTechServiceUtil.getGoInterface ({
               getMDMInfo(
                   MDMInfo(
                        deviceInfo = it.deviceInformation ,
@@ -61,12 +61,12 @@ class MDMInfoUseCase @Inject constructor(
                       }
                   }
               )
-           }
+           })
     }
 
     @Throws(RuntimeException::class)
     private fun invokeAndroidQSenario(getMDMInfo: (MDMInfo) -> Unit) {
-        mobiMediaTechServiceUtil.getQInterface {
+        mobiMediaTechServiceUtil.getQInterface ({
             getMDMInfo(
                 MDMInfo(
                     deviceInfo = it.deviceInformation,
@@ -79,7 +79,7 @@ class MDMInfoUseCase @Inject constructor(
                     installedPackages = it.packageList.toPackageInfoList()
                 )
             )
-        }
+        })
     }
 
     private fun getLocationOBJ(mode : Int, interfaceCoordinates :String?): String {

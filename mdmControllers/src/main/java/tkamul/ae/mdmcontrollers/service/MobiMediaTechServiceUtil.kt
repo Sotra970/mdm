@@ -17,33 +17,38 @@ import java.lang.RuntimeException
 /**
  * class to get Media Tech interface for device operations like wifi , blutoothe , etc
  */
- class
-MobiMediaTechServiceUtil(val context: Context) {
+ class MobiMediaTechServiceUtil(val context: Context) {
 
     private val mediatekRemoteServiceIntent = Intent("com.mediatek.settings.MyService.action")
 
     @Throws(RuntimeException::class)
-    fun getGoInterface(onServiceConnected :(CSAndoridGo)->Unit ){
-       bindRemoteService {
+    fun getGoInterface(onServiceConnected :(CSAndoridGo)->Unit  ,  onServiceDisconnected :  ()->Unit = {}){
+       bindRemoteService ({
            onServiceConnected(CSAndoridGo.Stub.asInterface(it))
-       }
+       },{
+           onServiceDisconnected()
+       })
     }
     @Throws(RuntimeException::class)
-    fun getQInterface(onServiceConnected :(CsApiAndroidQ)->Unit ){
-        bindRemoteService {
+    fun getQInterface(onServiceConnected :(CsApiAndroidQ)->Unit ,  onServiceDisconnected :  ()->Unit = {} ){
+        bindRemoteService( {
             onServiceConnected(CsApiAndroidQ.Stub.asInterface(it))
-        }
+        }, {
+            onServiceDisconnected()
+        })
     }
 
     // function to get androidQ or androidgo interface
     @Throws(RuntimeException::class)
-     fun bindRemoteService(onServiceConnected :(IBinder)->Unit ){
+     fun bindRemoteService(onServiceConnected :(IBinder)->Unit , onServiceDisconnected :  ()->Unit = {} ){
         val intent = Intent()
         intent.action = "com.mediatek.settings.MyService.action" //若修改了清单文件，一定要重启手机！
         val service = createExplicitFromImplicitIntent(context)
-        val connection = geMediaTechConnectionListener { serviceInterface: IBinder ->
+        val connection = geMediaTechConnectionListener ({ serviceInterface: IBinder ->
             onServiceConnected(serviceInterface)
-        }
+        },{
+            onServiceDisconnected()
+        })
         context.bindService(service, connection, Context.BIND_AUTO_CREATE)
     }
 
@@ -70,14 +75,13 @@ MobiMediaTechServiceUtil(val context: Context) {
         throw Exception( "cant find service match [${mediatekRemoteServiceIntent.action}]")
     }
 
-    @Throws(RuntimeException::class)
-    private fun geMediaTechConnectionListener(onServiceConnected :  ( serviceInterface: IBinder)->Unit = {} ): ServiceConnection {
+    private fun geMediaTechConnectionListener(onServiceConnected :  ( serviceInterface: IBinder)->Unit = {} , onServiceDisconnected :  ()->Unit = {}): ServiceConnection {
         return object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName, serviceInterface: IBinder) {
                 onServiceConnected(serviceInterface)
             }
             override fun onServiceDisconnected(componentName: ComponentName) {
-                throw RuntimeException("Service Disconnected")
+                onServiceDisconnected()
             }
         }
     }

@@ -30,13 +30,13 @@ class UnInstallApkUsecase @Inject constructor(
 
     @Throws(RuntimeException::class)
     private fun unInstallPreQ(packageName: String, onFinish: ( Boolean) -> Unit) {
-        mobiMediaTechServiceUtil.getGoInterface {
+        mobiMediaTechServiceUtil.getGoInterface( {
             it.removeApp(packageName)
             thread {
                 Thread.sleep(15*1000)
                 onFinish(!it.packageList.containsApp(packageName))
             }
-        }
+        })
     }
 
 
@@ -45,13 +45,13 @@ class UnInstallApkUsecase @Inject constructor(
 
 @Throws(RuntimeException::class)
     private fun unInstallONQ(packageName: String, onFinish: ( Boolean) -> Unit) {
-        mobiMediaTechServiceUtil.getQInterface {
+        mobiMediaTechServiceUtil.getQInterface( {
             it.removeApp(packageName)
             thread {
                 Thread.sleep(15*1000)
                 onFinish(!it.packageList.containsApp(packageName))
             }
-        }
+        })
     }
 }
 

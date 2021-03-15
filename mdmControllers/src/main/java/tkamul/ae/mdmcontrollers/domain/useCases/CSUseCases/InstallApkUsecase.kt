@@ -57,13 +57,13 @@ class InstallApkUsecase @Inject constructor(
     @Throws(RuntimeException::class)
     private fun installPreQ(downloadStatus: DownloadUtils.DownloadStatus, onFinish: (DownloadUtils.DownloadStatus, Boolean) -> Unit) {
         val packageName = getPackageName(downloadStatus.fileUri)
-        mobiMediaTechServiceUtil.getGoInterface {
+        mobiMediaTechServiceUtil.getGoInterface( {
           it.installApp(downloadStatus.fileUri, packageName)
             thread {
                 Thread.sleep(15 * 1000)
                 onFinish(downloadStatus, it.packageList.containsApp(packageName))
             }
-        }
+        })
     }
 
 
@@ -73,13 +73,13 @@ class InstallApkUsecase @Inject constructor(
 @Throws(RuntimeException::class)
     private fun installONQ(downloadStatus: DownloadUtils.DownloadStatus, onFinish: (DownloadUtils.DownloadStatus, Boolean) -> Unit) {
     val packageName = getPackageName(downloadStatus.fileUri)
-        mobiMediaTechServiceUtil.getQInterface {
+        mobiMediaTechServiceUtil.getQInterface( {
             it.installApp(downloadStatus.fileUri, packageName)
             thread {
                 Thread.sleep(15 * 1000)
                 onFinish(downloadStatus, it.packageList.containsApp(packageName))
             }
-        }
+        })
     }
 
     private fun getPackageName(fileUri: String?): String{

@@ -28,25 +28,25 @@ class WifiUseCase @Inject constructor(
         enable: Boolean,
         onFinish: () -> Unit
     ) {
-           mobiMediaTechServiceUtil.getGoInterface {
+           mobiMediaTechServiceUtil.getGoInterface ({
                if (enable){
                    it.enableWifi()
                }else{
                    it.disableWifi()
                }
                onFinish()
-           }
+           })
     }
 
     @Throws(RuntimeException::class)
     private fun invokeAndroidQSenario(enable: Boolean, onFinish: () -> Unit) {
-        mobiMediaTechServiceUtil.getQInterface {
+        mobiMediaTechServiceUtil.getQInterface({
             if (enable){
                 it.enableWifi()
             }else{
                 it.disableWifi()
             }
             onFinish()
-        }
+        })
     }
 }

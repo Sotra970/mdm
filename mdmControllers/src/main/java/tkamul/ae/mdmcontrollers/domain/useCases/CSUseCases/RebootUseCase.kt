@@ -16,13 +16,13 @@ class RebootUseCase @Inject constructor(
      fun invoke(){
         Logger.logd("Build.VERSION : "+Build.VERSION.SDK_INT)
         if (Build.VERSION.SDK_INT == 29) {
-            mobiMediaTechServiceUtil.getQInterface {
+            mobiMediaTechServiceUtil.getQInterface({
                 it.sofewareReboot()
-            }
+            })
         } else {
-            mobiMediaTechServiceUtil.getGoInterface {
+            mobiMediaTechServiceUtil.getGoInterface({
                 it.sofewareReboot()
-            }
+            })
         }
     }
 }

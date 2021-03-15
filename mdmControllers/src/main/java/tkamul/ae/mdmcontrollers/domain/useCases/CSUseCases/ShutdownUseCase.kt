@@ -16,13 +16,13 @@ class ShutdownUseCase @Inject constructor(
      fun invoke(){
         Logger.logd("Build.VERSION : "+Build.VERSION.SDK_INT)
         if (Build.VERSION.SDK_INT == 29) {
-            mobiMediaTechServiceUtil.getQInterface {
+            mobiMediaTechServiceUtil.getQInterface({
                 it.shutDown()
-            }
+            })
         } else {
-            mobiMediaTechServiceUtil.getGoInterface {
+            mobiMediaTechServiceUtil.getGoInterface( {
                 it.shutDown()
-            }
+            })
         }
     }
 }

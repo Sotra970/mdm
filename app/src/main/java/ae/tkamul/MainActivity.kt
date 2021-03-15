@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-//        bindSerilaNumber()
+        bindSerilaNumber()
     }
 
     private fun bindSerilaNumber() {

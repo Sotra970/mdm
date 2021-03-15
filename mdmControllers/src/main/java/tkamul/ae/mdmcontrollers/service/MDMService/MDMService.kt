@@ -23,9 +23,6 @@ class MDMService : Service()  , MDMServiceEventInterface {
 
     @Inject
     lateinit var mdmSocketChannelUseCase: MDMSocketChannelUseCase
-    @Inject
-    lateinit var mdmInfoController: MDMInfoUseCase
-
 
     @Inject
     lateinit var eventExecutorController: EventExecutorController
@@ -49,7 +46,7 @@ class MDMService : Service()  , MDMServiceEventInterface {
     }
 
 
-    @SuppressLint("CheckResult")
+    @Throws(Exception::class)
     private fun startListingOnSocketEvents(info: MDMInfo) {
         mdmSocketChannelUseCase.observe(info.deviceInfo.serial_number , object : SocketEventListener {
             override fun onConnect(args: Any) {
@@ -66,17 +63,17 @@ class MDMService : Service()  , MDMServiceEventInterface {
     }
 
     private fun sendDeviceInfo() {
-       kotlin.runCatching {
-           mdmInfoController.invoke {
-               mdmSocketChannelUseCase.send(DeviceInfo2SocketPayload(
-                   args = Args("onConnect"),
-                   device = it,
-                   event = Config.Events.SET_DEVICE_INFO_EVENT
-               ))
-           }
-       }.onFailure {
-           showNotification(it.toString() , 404)
-       }
+        kotlin.runCatching {
+            eventExecutorController.invokeMDMInfo {
+                mdmSocketChannelUseCase.send(DeviceInfo2SocketPayload(
+                    args = Args("onConnect"),
+                    device = it,
+                    event = Config.Events.SET_DEVICE_INFO_EVENT
+                ))
+            }
+        }.onFailure {
+            showNotification(it.toString() , 404)
+        }
     }
 
 
@@ -113,13 +110,17 @@ class MDMService : Service()  , MDMServiceEventInterface {
 
    override fun completeEvent(rayId : String  , eventId: String?) {
       eventId?.let {
-          mdmInfoController.invoke {
-              it.executedEvent = eventId
-              mdmSocketChannelUseCase.send(DeviceInfo2SocketPayload(
-                  args = Args(rayId),
-                  device = it,
-                  event = Config.Events.SET_DEVICE_INFO_EVENT
-              ))
+          kotlin.runCatching {
+              eventExecutorController.invokeMDMInfo {
+                  it.executedEvent = eventId
+                  mdmSocketChannelUseCase.send(DeviceInfo2SocketPayload(
+                      args = Args(rayId),
+                      device = it,
+                      event = Config.Events.SET_DEVICE_INFO_EVENT
+                  ))
+              }
+          }.onFailure {
+              showNotification(it.toString() , 404)
           }
       }
     }

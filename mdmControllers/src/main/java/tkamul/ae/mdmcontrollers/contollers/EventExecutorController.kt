@@ -6,6 +6,7 @@ import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.PrintUseCase
 import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.*
 import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.InstallApkUsecase
 import tkamul.ae.mdmcontrollers.domain.useCases.remote.ExecuteCommandUseCase
+import java.lang.RuntimeException
 import javax.inject.Inject
 
 /**
@@ -98,9 +99,10 @@ class EventExecutorController  @Inject constructor(
              }
          }.onFailure {
              // TODO: 3/14/2021  send error to socket
+             throw it
          }
     }
-
+    @Throws(RuntimeException::class)
     private fun invokeExcecuteRemoteCommand(pairs: NameValuePairs) {
         executeCommandUseCase.invoke(pairs.args.nameValuePairs.commandId!!,pairs.args.nameValuePairs.ray_id)
     }
@@ -108,6 +110,7 @@ class EventExecutorController  @Inject constructor(
     /**
      * invoke print use case
      */
+    @Throws(RuntimeException::class)
     private fun invokeInstallApk(pairs: NameValuePairs) {
         installApkController.invoke(
                 url = pairs.args.nameValuePairs.url!!,
@@ -122,6 +125,7 @@ class EventExecutorController  @Inject constructor(
     /**
      * invoke print use case
      */
+    @Throws(RuntimeException::class)
     private fun invokeUnInstallApk(pairs: NameValuePairs) {
         unInstallApkController.invoke(
                 packageName = pairs.args.nameValuePairs.packageName!!,
@@ -134,6 +138,7 @@ class EventExecutorController  @Inject constructor(
     /**
      * invoke print use case
      */
+    @Throws(RuntimeException::class)
     private fun invokePrint(pairs: NameValuePairs) {
         printController.invoke(pairs.args.nameValuePairs.printText?:"null"){ lastLineStatus->
             sendInfoController.setPrintStatusToSocket(pairs , lastLineStatus)
@@ -144,6 +149,7 @@ class EventExecutorController  @Inject constructor(
     /**
      *  invoke location use case
       */
+    @Throws(RuntimeException::class)
     private fun invokeLocation(enable: Boolean, pairs: NameValuePairs) {
         locationController.invoke(enable){
              sendInfoController.sendStatusToSocket(pairs)
@@ -153,6 +159,7 @@ class EventExecutorController  @Inject constructor(
     /**
      * invoke nfc use case
      */
+    @Throws(RuntimeException::class)
     private fun invokeNFC(enable: Boolean, pairs: NameValuePairs) {
         nfcController.invoke(enable){
              sendInfoController.sendStatusToSocket(pairs)
@@ -162,6 +169,7 @@ class EventExecutorController  @Inject constructor(
     /**
      * invoke bluetooth use case
      */
+    @Throws(RuntimeException::class)
     private fun invokeBluetooth(enable: Boolean, pairs: NameValuePairs) {
         bluetoothController.invoke(enable){
             sendInfoController.sendStatusToSocket(pairs)
@@ -171,6 +179,7 @@ class EventExecutorController  @Inject constructor(
     /**
      * invoke mobile data use case
      */
+    @Throws(RuntimeException::class)
     private fun invokedata(enable: Boolean, pairs: NameValuePairs) {
         mobileDataController.invoke(enable){
              sendInfoController.sendStatusToSocket(pairs)
@@ -181,6 +190,7 @@ class EventExecutorController  @Inject constructor(
     /**
      * invoke wifi use case
      */
+    @Throws(RuntimeException::class)
     fun invokeWifi(enable: Boolean, pairs: NameValuePairs){
         wifiController.invoke(enable) {
              sendInfoController.sendStatusToSocket(pairs)
@@ -192,6 +202,7 @@ class EventExecutorController  @Inject constructor(
      * pass mdm info obj to mdmInfoListener
      * used From service to get serial number to be a query parameter for socket channel
      */
+    @Throws(RuntimeException::class)
     fun invokeMDMInfo(mdmInfoListener: (MDMInfo) -> Unit) {
         mdmInfoController.invoke {
             mdmInfoListener(it)
