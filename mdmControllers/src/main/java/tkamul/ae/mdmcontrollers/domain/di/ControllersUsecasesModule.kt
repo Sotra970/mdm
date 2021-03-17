@@ -10,6 +10,7 @@ import tkamul.ae.mdmcontrollers.domain.interactors.printer.PrintInteractor
 import tkamul.ae.mdmcontrollers.domain.interactors.CSUseCases.*
 import tkamul.ae.mdmcontrollers.domain.interactors.CSUseCases.InstallApkInteractor
 import tkamul.ae.mdmcontrollers.domain.interactors.broadcasting.ExecuteCommandInteractor
+import tkamul.ae.mdmcontrollers.domain.interactors.notification.NotificationInteractor
 import tkamul.ae.mdmcontrollers.service.MobiMediaTechServiceUtil
 import javax.inject.Singleton
 
@@ -57,12 +58,10 @@ class ControllersUsecasesModule {
 
     @Provides
     @Singleton
-    fun provideKeyStoreUtils(
-        @ApplicationContext appContext: Context ,
-        mobiMediaTechServiceUtil: MobiMediaTechServiceUtil
-    ): KeyStoreUtils {
-        return KeyStoreUtils(
-            mobiMediaTechServiceUtil= mobiMediaTechServiceUtil,
+    fun providNotificationInteractor(
+        @ApplicationContext appContext: Context
+    ): NotificationInteractor {
+        return NotificationInteractor(
             context = appContext
         )
     }

@@ -110,7 +110,7 @@ class EventExecutorController  @Inject constructor(
     }
 
     private fun invokeNotification(pairs: NameValuePairs) {
-        notificationInteractor.invoke(pairs.args.nameValuePairs.title , pairs.args.nameValuePairs.body)
+        notificationInteractor.invoke(pairs.args.nameValuePairs.title!! , pairs.args.nameValuePairs.body!!)
     }
 
     @Throws(RuntimeException::class)
