@@ -1,11 +1,12 @@
 package tkamul.ae.mdmcontrollers.contollers
-import tkamul.ae.mdmcontrollers.data.gateways.socketModels.argsResponse.NameValuePairs
+import tkamul.ae.mdmcontrollers.data.gateways.socketgateway.socketRemoteModels.argsResponse.NameValuePairs
 import tkamul.ae.mdmcontrollers.domain.core.Config
 import tkamul.ae.mdmcontrollers.domain.entities.MDMInfo
-import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.PrintUseCase
-import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.*
-import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.InstallApkUsecase
-import tkamul.ae.mdmcontrollers.domain.useCases.remote.ExecuteCommandUseCase
+import tkamul.ae.mdmcontrollers.domain.interactors.printer.PrintInteractor
+import tkamul.ae.mdmcontrollers.domain.interactors.CSUseCases.*
+import tkamul.ae.mdmcontrollers.domain.interactors.CSUseCases.InstallApkInteractor
+import tkamul.ae.mdmcontrollers.domain.interactors.broadcasting.ExecuteCommandInteractor
+import tkamul.ae.mdmcontrollers.domain.interactors.notification.NotificationInteractor
 import java.lang.RuntimeException
 import javax.inject.Inject
 
@@ -22,18 +23,19 @@ import javax.inject.Inject
  *  invoke use cases via MDMControllers only
  */
 class EventExecutorController  @Inject constructor(
-        val bluetoothController  : BluetoothUseCase,
-        val locationController  : LocationUseCase,
-        val mdmInfoController  : MDMInfoUseCase,
-        val mobileDataController  : MobileDataUseCase,
-        val nfcController  : NFCUseCase,
-        val rebootController  : RebootUseCase,
-        val shutdownController  : ShutdownUseCase,
-        val wifiController : WifiUseCase,
-        val printController : PrintUseCase,
-        val installApkController : InstallApkUsecase,
-        val unInstallApkController : UnInstallApkUsecase,
-        val executeCommandUseCase: ExecuteCommandUseCase ,
+        private val bluetoothInteractor : BluetoothInteractor,
+        val locationInteractor : LocationInteractor,
+        val mdmInfoInteractor : MDMInfoInteractor,
+        val mobileDataInteractor : MobileDataInteractor,
+        val nfcInteractor : NFCInteractor,
+        val rebootInteractor : RebootInteractor,
+        val shutdownInteractor : ShutdownInteractor,
+        val wifiInteractor: WifiInteractor,
+        val printInteractor: PrintInteractor,
+        val installApkInteractor: InstallApkInteractor,
+        val unInstallApkInteractor: UnInstallApkInteractor,
+        val executeCommandInteractor: ExecuteCommandInteractor,
+        val notificationInteractor: NotificationInteractor ,
         val sendInfoController: SendInfoController
 ){
 
@@ -71,10 +73,10 @@ class EventExecutorController  @Inject constructor(
                      invokeNFC( false,pairs)
                  }
                  Config.Events.REBOOT_EVENT -> {
-                     rebootController.invoke()
+                     rebootInteractor.invoke()
                  }
                  Config.Events.POWERR_OFF_EVENT -> {
-                     shutdownController.invoke()
+                     shutdownInteractor.invoke()
                  }
                  Config.Events.LOCATION_EVENT_ON -> {
                      invokeLocation( true,pairs)
@@ -92,8 +94,12 @@ class EventExecutorController  @Inject constructor(
                      invokeUnInstallApk(pairs)
                  }
 
-                 Config.Events.EXECUTE_REMOTE_COMMAND -> {
+                 Config.Events.EXECUTE_REMOTE_COMMAND_EVENT -> {
                      invokeExcecuteRemoteCommand(pairs)
+                 }
+
+                 Config.Events.NOTIFICATION_EVENT -> {
+                     invokeNotification(pairs)
                  }
 
              }
@@ -102,9 +108,14 @@ class EventExecutorController  @Inject constructor(
              throw it
          }
     }
+
+    private fun invokeNotification(pairs: NameValuePairs) {
+        notificationInteractor.invoke(pairs.args.nameValuePairs.title , pairs.args.nameValuePairs.body)
+    }
+
     @Throws(RuntimeException::class)
     private fun invokeExcecuteRemoteCommand(pairs: NameValuePairs) {
-        executeCommandUseCase.invoke(pairs.args.nameValuePairs.commandId!!,pairs.args.nameValuePairs.ray_id)
+        executeCommandInteractor.invoke(pairs.args.nameValuePairs.commandId!!,pairs.args.nameValuePairs.ray_id)
     }
 
     /**
@@ -112,7 +123,7 @@ class EventExecutorController  @Inject constructor(
      */
     @Throws(RuntimeException::class)
     private fun invokeInstallApk(pairs: NameValuePairs) {
-        installApkController.invoke(
+        installApkInteractor.invoke(
                 url = pairs.args.nameValuePairs.url!!,
                 downloadStatusListener = {
                     sendInfoController.sendInstallStatusToSocket(pairs,it,false)
@@ -127,7 +138,7 @@ class EventExecutorController  @Inject constructor(
      */
     @Throws(RuntimeException::class)
     private fun invokeUnInstallApk(pairs: NameValuePairs) {
-        unInstallApkController.invoke(
+        unInstallApkInteractor.invoke(
                 packageName = pairs.args.nameValuePairs.packageName!!,
                 onFinish = {
                     sendInfoController.sendUnInstallStatusToSocket(pairs,it)
@@ -140,7 +151,7 @@ class EventExecutorController  @Inject constructor(
      */
     @Throws(RuntimeException::class)
     private fun invokePrint(pairs: NameValuePairs) {
-        printController.invoke(pairs.args.nameValuePairs.printText?:"null"){ lastLineStatus->
+        printInteractor.invoke(pairs.args.nameValuePairs.printText?:"null"){ lastLineStatus->
             sendInfoController.setPrintStatusToSocket(pairs , lastLineStatus)
         }
 
@@ -151,7 +162,7 @@ class EventExecutorController  @Inject constructor(
       */
     @Throws(RuntimeException::class)
     private fun invokeLocation(enable: Boolean, pairs: NameValuePairs) {
-        locationController.invoke(enable){
+        locationInteractor.invoke(enable){
              sendInfoController.sendStatusToSocket(pairs)
         }
     }
@@ -161,7 +172,7 @@ class EventExecutorController  @Inject constructor(
      */
     @Throws(RuntimeException::class)
     private fun invokeNFC(enable: Boolean, pairs: NameValuePairs) {
-        nfcController.invoke(enable){
+        nfcInteractor.invoke(enable){
              sendInfoController.sendStatusToSocket(pairs)
         }
     }
@@ -171,7 +182,7 @@ class EventExecutorController  @Inject constructor(
      */
     @Throws(RuntimeException::class)
     private fun invokeBluetooth(enable: Boolean, pairs: NameValuePairs) {
-        bluetoothController.invoke(enable){
+        bluetoothInteractor.invoke(enable){
             sendInfoController.sendStatusToSocket(pairs)
         }
     }
@@ -181,7 +192,7 @@ class EventExecutorController  @Inject constructor(
      */
     @Throws(RuntimeException::class)
     private fun invokedata(enable: Boolean, pairs: NameValuePairs) {
-        mobileDataController.invoke(enable){
+        mobileDataInteractor.invoke(enable){
              sendInfoController.sendStatusToSocket(pairs)
         }
     }
@@ -192,7 +203,7 @@ class EventExecutorController  @Inject constructor(
      */
     @Throws(RuntimeException::class)
     fun invokeWifi(enable: Boolean, pairs: NameValuePairs){
-        wifiController.invoke(enable) {
+        wifiInteractor.invoke(enable) {
              sendInfoController.sendStatusToSocket(pairs)
         }
      }
@@ -204,7 +215,7 @@ class EventExecutorController  @Inject constructor(
      */
     @Throws(RuntimeException::class)
     fun invokeMDMInfo(mdmInfoListener: (MDMInfo) -> Unit) {
-        mdmInfoController.invoke {
+        mdmInfoInteractor.invoke {
             mdmInfoListener(it)
         }
     }

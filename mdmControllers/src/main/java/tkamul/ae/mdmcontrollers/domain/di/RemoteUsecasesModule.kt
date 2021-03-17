@@ -5,7 +5,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import tkamul.ae.mdmcontrollers.data.gateways.socketgateway.SocketApiClientImplementer
-import tkamul.ae.mdmcontrollers.domain.useCases.remote.MDMSocketChannelUseCase
+import tkamul.ae.mdmcontrollers.domain.interactors.remote.SocketRepo
 import javax.inject.Singleton
 
 /**
@@ -17,8 +17,8 @@ class RemoteUsecasesModule {
 
     @Provides
     @Singleton
-    fun provideSocketController(socketApiClientImplementer: SocketApiClientImplementer): MDMSocketChannelUseCase {
-        return MDMSocketChannelUseCase(
+    fun provideSocketController(socketApiClientImplementer: SocketApiClientImplementer): SocketRepo {
+        return SocketRepo(
             socketApiClientImplementer
         )
     }

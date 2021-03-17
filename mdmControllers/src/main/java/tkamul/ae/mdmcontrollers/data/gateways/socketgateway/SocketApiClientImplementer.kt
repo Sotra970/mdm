@@ -5,7 +5,6 @@ import io.socket.client.Ack
 import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
-import tkamul.ae.mdmcontrollers.domain.core.Config
 import tkamul.ae.mdmcontrollers.domain.core.Logger
 import java.net.URISyntaxException
 
@@ -15,9 +14,8 @@ import java.net.URISyntaxException
  */
 
 class SocketApiClientImplementer : SocketApi {
-    private val listeners: MutableMap<String , MutableList<SocketEventListener>> = mutableMapOf()
+    private val socketListeners: MutableMap<String , SocketNode> = mutableMapOf()
 
-    lateinit var  mSocket : Socket
     val tag = "socket-call"
 
     /**
@@ -33,40 +31,41 @@ class SocketApiClientImplementer : SocketApi {
 
     /**
      * Connect to the server.
-     *
-     * @param username
      * @throws URISyntaxException
      */
     @Throws(URISyntaxException::class)
-    override fun observe (eventName : String  , serial : String, socketEventListener: SocketEventListener){
+    override fun observe (url :String, eventName : String, query : String, socketEventCallbacks: SocketEventCallbacks) {
         // Register the incoming events and their listeners
         // on the socket.
-        val options = IO.Options.builder()
-        options.setQuery("serialNo=[${serial}]")
-        mSocket = IO.socket(Config.MDM_SOCKET_URL , options.build())
-
-        mdifyListeners(eventName , socketEventListener)
-        mSocket.on(Socket.EVENT_CONNECT, onConnect(eventName))
-        mSocket.on(Socket.EVENT_DISCONNECT, onDisconnect(eventName))
-        mSocket.on(eventName, onNewMessage(eventName))
-        mSocket.connect()
+        val listenerKey = getListenerKey(url,query,eventName)
+        if (socketListeners.containsKey(listenerKey)){
+            socketListeners[listenerKey]?.callbacks?.add(socketEventCallbacks)
+        }   else {
+            val options = IO.Options.builder()
+            options.setQuery(query)
+            var newSocket = IO.socket(url, options.build())
+            val node = SocketNode(
+                    newSocket,
+                    mutableListOf(socketEventCallbacks)
+            )
+            socketListeners[listenerKey] = node
+            newSocket.on(Socket.EVENT_CONNECT, onConnect(node))
+            newSocket.on(Socket.EVENT_DISCONNECT, onDisconnect(node))
+            newSocket.on(eventName, onNewMessage(node))
+            newSocket.connect()
+        }
     }
 
-    private fun mdifyListeners(eventName: String, socketEventListener: SocketEventListener) {
-        if (listeners.containsKey(eventName)){
-            val subListeners = listeners.get(eventName)
-            subListeners?.add(socketEventListener)
-        }   else {
-            listeners[eventName] = mutableListOf(socketEventListener)
-        }
+    private fun getListenerKey(url: String, query: String, eventName: String): String {
+        return url+query+eventName
     }
 
     /**
      * Disconnect from the server.
      *
      */
-    override fun disconnect() {
-        mSocket.disconnect()
+    override fun disconnect(url: String, query: String, eventName: String) {
+        socketListeners[getListenerKey(url,query,eventName)]?.socket?.disconnect()
     }
 
 
@@ -76,34 +75,34 @@ class SocketApiClientImplementer : SocketApi {
      * @param chatMessage
      * @return
      */
-    override fun <P>sendMessage(eventName: String  , payload: P,  ack : Ack ) {
+    override fun <P>sendMessage(url: String, query: String,eventName: String  , payload: P,  ack : Ack ) {
         Logger.logd("$tag sending [${payload.toString()}]")
-         mSocket.emit(eventName, payload ,ack)
+        socketListeners[getListenerKey(url,query,eventName)]?.socket?.emit(eventName, payload ,ack)
     }
 
 
 
 
     // On connect listener
-    private fun onConnect(eventName: String) : Emitter.Listener = Emitter.Listener { args ->
+    private fun onConnect(node: SocketNode) : Emitter.Listener = Emitter.Listener { args ->
         Logger.logd("$tag onConnect , args : "+ Gson().toJson(args) )
-        for (child in listeners[eventName]!!.iterator()){
+        for (child in node.callbacks){
             child.onConnect(args)
         }
     }
 
     // On disconnect listener
-    private fun onDisconnect(eventName: String): Emitter.Listener = Emitter.Listener { args ->
+    private fun onDisconnect(node: SocketNode) : Emitter.Listener = Emitter.Listener { args ->
        Logger.logd("$tag onDisconnect , args :" + Gson().toJson(args) )
-        for (child in listeners[eventName]!!.iterator()){
+        for (child in node.callbacks){
             child.onDisconnect(args)
         }
     }
 
     // On new message listener
-    private fun onNewMessage(eventName: String)  : Emitter.Listener = Emitter.Listener { args ->
-            Logger.logd("$tag onNewMessage , args : "+ Gson().toJson(args) )
-        for (child in listeners[eventName]!!.iterator()){
+    private fun onNewMessage(node: SocketNode)  : Emitter.Listener = Emitter.Listener { args ->
+        Logger.logd("$tag onNewMessage , args : "+ Gson().toJson(args) )
+        for (child in node.callbacks){
             child.onNewMessage(args)
         }
     }

@@ -1,21 +1,21 @@
 package tkamul.ae.mdmcontrollers.contollers
 
 import tkamul.ae.mdmcontrollers.PrinterModule.models.config.LinePrintingStatus
-import tkamul.ae.mdmcontrollers.data.gateways.socketModels.argsResponse.NameValuePairs
-import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.Args
-import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.DeviceInfo2SocketPayload
-import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.UnInstallInfo2SocketPayload
+import tkamul.ae.mdmcontrollers.data.gateways.socketgateway.socketRemoteModels.argsResponse.NameValuePairs
+import tkamul.ae.mdmcontrollers.data.gateways.socketgateway.socketRemoteModels.sendingObject.Args
+import tkamul.ae.mdmcontrollers.data.gateways.socketgateway.socketRemoteModels.sendingObject.DeviceInfo2SocketPayload
+import tkamul.ae.mdmcontrollers.data.gateways.socketgateway.socketRemoteModels.sendingObject.UnInstallInfo2SocketPayload
 import tkamul.ae.mdmcontrollers.domain.core.Config
 import tkamul.ae.mdmcontrollers.domain.core.DownloadUtils
-import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.MDMInfoUseCase
-import tkamul.ae.mdmcontrollers.domain.useCases.remote.MDMSocketChannelUseCase
+import tkamul.ae.mdmcontrollers.domain.interactors.CSUseCases.MDMInfoInteractor
+import tkamul.ae.mdmcontrollers.domain.interactors.remote.SocketRepo
 import javax.inject.Inject
 import kotlin.concurrent.thread
 
 
 class SendInfoController @Inject constructor(
-         var mdmSocketChannelController : MDMSocketChannelUseCase,
-         var mdmInfoController  : MDMInfoUseCase
+        var socketRepoController : SocketRepo,
+        var mdmInfoController  : MDMInfoInteractor
 ){
 
 
@@ -29,7 +29,7 @@ class SendInfoController @Inject constructor(
             //      then send mobile info
             Thread.sleep(5*1000)
             mdmInfoController.invoke {
-                mdmSocketChannelController.send(DeviceInfo2SocketPayload(
+                socketRepoController.send(DeviceInfo2SocketPayload(
                         args = Args(pairs.args.nameValuePairs.ray_id),
                         device = it,
                         event = Config.Events.SET_DEVICE_INFO_EVENT
@@ -47,7 +47,7 @@ class SendInfoController @Inject constructor(
                     this.installStatus = installStatus
                     this.installed = installed
                 }
-                mdmSocketChannelController.send(DeviceInfo2SocketPayload(
+                socketRepoController.send(DeviceInfo2SocketPayload(
                         event = Config.Events.SET_DEVICE_INFO_EVENT ,
                         device = it,
                         args = Args(pairs.args.nameValuePairs.ray_id)
@@ -63,7 +63,7 @@ class SendInfoController @Inject constructor(
                 it.apply {
                     this.unInstalled = unInstalled
                 }
-                mdmSocketChannelController.send(UnInstallInfo2SocketPayload(
+                socketRepoController.send(UnInstallInfo2SocketPayload(
                         event = Config.Events.SET_DEVICE_INFO_EVENT ,
                         device = it,
                         unInstalled=unInstalled,
@@ -79,7 +79,7 @@ class SendInfoController @Inject constructor(
                 it.apply {
                     this.lastLineStatus = lastLineStatus
                 }
-                mdmSocketChannelController.send(DeviceInfo2SocketPayload(
+                socketRepoController.send(DeviceInfo2SocketPayload(
                         args = Args(pairs.args.nameValuePairs.ray_id),
                         device = it,
                         event = Config.Events.SET_DEVICE_INFO_EVENT

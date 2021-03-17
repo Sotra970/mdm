@@ -1,8 +1,10 @@
 package tkamul.ae.mdmcontrollers.contollers
 
-import tkamul.ae.mdmcontrollers.data.gateways.socketModels.argsResponse.Args
-import tkamul.ae.mdmcontrollers.data.gateways.socketModels.argsResponse.NameValuePairs
-import tkamul.ae.mdmcontrollers.data.gateways.socketModels.argsResponse.NameValuePairsX
+import tkamul.ae.mdmcontrollers.R
+import tkamul.ae.mdmcontrollers.data.gateways.socketgateway.socketRemoteModels.argsResponse.Args
+import tkamul.ae.mdmcontrollers.data.gateways.socketgateway.socketRemoteModels.argsResponse.NameValuePairs
+import tkamul.ae.mdmcontrollers.data.gateways.socketgateway.socketRemoteModels.argsResponse.NameValuePairsX
+import tkamul.ae.mdmcontrollers.domain.core.Config
 import javax.inject.Inject
 
 class InternalEventExecutor @Inject constructor(
@@ -18,6 +20,23 @@ class InternalEventExecutor @Inject constructor(
                         event = event ,
                         args = Args(
                                 NameValuePairsX(ray_id = "internal",url=url)
+                        )
+                ))
+    }
+
+    /**
+     * invoke usecase from UI ( for UI testing )
+     */
+    fun invokeInternalNotificationProcess(event: String ) {
+        eventExecutorController.invokProcess(
+                NameValuePairs(
+                        event = event ,
+                        args = Args(
+                                NameValuePairsX(
+                                        ray_id = "internal",
+                                        title = "incoming notification",
+                                        body ="Hello from MDM server "
+                                )
                         )
                 ))
     }

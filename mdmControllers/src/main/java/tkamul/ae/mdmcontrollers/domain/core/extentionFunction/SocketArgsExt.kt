@@ -3,8 +3,8 @@ package tkamul.ae.mdmcontrollers.domain.core.extentionFunction
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import tkamul.ae.mdmcontrollers.data.gateways.socketModels.argsResponse.NameValuePairs
-import tkamul.ae.mdmcontrollers.data.gateways.socketModels.argsResponse.SocketArgsResponseItem
+import tkamul.ae.mdmcontrollers.data.gateways.socketgateway.socketRemoteModels.argsResponse.NameValuePairs
+import tkamul.ae.mdmcontrollers.data.gateways.socketgateway.socketRemoteModels.argsResponse.SocketArgsResponseItem
 import tkamul.ae.mdmcontrollers.domain.core.Logger
 import java.lang.reflect.Type
 

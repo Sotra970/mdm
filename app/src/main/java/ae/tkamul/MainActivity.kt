@@ -1,9 +1,7 @@
 package ae.tkamul
 
-import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -12,7 +10,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import tkamul.ae.mdmcontrollers.PrinterModule.TkamulPrinterFactory
 import tkamul.ae.mdmcontrollers.contollers.InternalEventExecutor
 import tkamul.ae.mdmcontrollers.domain.core.Config
-import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.MDMInfoUseCase
+import tkamul.ae.mdmcontrollers.domain.interactors.CSUseCases.MDMInfoInteractor
 import javax.inject.Inject
 
 
@@ -25,14 +23,19 @@ class MainActivity : AppCompatActivity() {
     lateinit var internalEventExecutorController: InternalEventExecutor
 
     @Inject
-    lateinit var  mdmInfoUseCase: MDMInfoUseCase
+    lateinit var  mdmInfoUseCase: MDMInfoInteractor
 
 
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        // show serial to ui
         bindSerilaNumber()
+        // say hi
+        internalEventExecutorController.invokeInternalNotificationProcess(
+                Config.Events.NOTIFICATION_EVENT
+        )
     }
 
     private fun bindSerilaNumber() {
@@ -48,7 +51,7 @@ class MainActivity : AppCompatActivity() {
     fun executeCommand(view: View){
         kotlin.runCatching {
             internalEventExecutorController.invokeInternalExecuteRemoteCommand(
-                event = Config.Events.EXECUTE_REMOTE_COMMAND,
+                event = Config.Events.EXECUTE_REMOTE_COMMAND_EVENT,
                 commandId= "TEST_COMMAND"
             )
         }.onFailure {

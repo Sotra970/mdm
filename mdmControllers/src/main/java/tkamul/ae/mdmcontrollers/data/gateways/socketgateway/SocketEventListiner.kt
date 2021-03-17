@@ -8,7 +8,7 @@ package tkamul.ae.mdmcontrollers.data.gateways.socketgateway
  * Main interface to listen to server events.
  *
  */
-interface SocketEventListener {
+interface SocketEventCallbacks {
     fun onConnect( args: Any)
     fun onDisconnect(vararg args: Any)
     fun onNewMessage(vararg args: Any)

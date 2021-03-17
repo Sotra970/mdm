@@ -1,6 +1,6 @@
 package tkamul.ae.mdmcontrollers.data.gateways.socketgateway
 import io.socket.client.Ack
-import io.socket.emitter.Emitter
+import io.socket.client.Socket
 import java.net.URISyntaxException
 
 /**
@@ -9,10 +9,10 @@ import java.net.URISyntaxException
 interface SocketApi {
 
     @Throws(URISyntaxException::class)
-    fun observe(eventName : String ,  serial : String , socketEventListener: SocketEventListener)
+    fun observe(url : String, eventName : String, serial : String, socketEventCallbacks: SocketEventCallbacks)
 
-    fun disconnect()
+    fun disconnect(url: String, query: String,eventName: String)
 
-    fun <P>sendMessage( eventName: String , payload: P , ack  : Ack = Ack{})
+    fun <P>sendMessage( url: String, query: String,eventName: String , payload: P , ack  : Ack = Ack{})
 
 }

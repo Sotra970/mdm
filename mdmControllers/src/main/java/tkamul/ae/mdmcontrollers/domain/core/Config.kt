@@ -40,14 +40,14 @@ object Config {
     const val MP3P_MODEL_NAME =  "MP3_Plus"
     const val MP3_MODEL_NAME =  "MP3"
     const val MDM_SOCKET_CHANNEL: String = "message"
-    const val SET_DEVICE_INFO_SOCKET_CHANNEL: String = "message"
     const val MDM_SOCKET_URL = "https://mdm-server-io.herokuapp.com"
 
     object Events {
         const val REMOTE_COMMAND_RECEIVER ="REMOTE_COMMAND_RECEIVER"
         const val COMMAND_ID_KEY =  "COMMAND_ID_KEY"
         const val COMMAND_RAY_ID_KEY =  "COMMAND_RAY_ID"
-        const val EXECUTE_REMOTE_COMMAND =  "execute"
+        const val EXECUTE_REMOTE_COMMAND_EVENT =  "execute"
+        const val NOTIFICATION_EVENT =  "notification"
         const val  UNINSTALL_EVENT= "uninstall-apk"
         const val  INSTALL_EVENT= "install-apk"
         const val SET_DEVICE_INFO_EVENT: String = "setDeviceInfo"

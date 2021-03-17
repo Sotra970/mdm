@@ -1,19 +1,17 @@
 package tkamul.ae.mdmcontrollers.service.MDMService
 
-import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import dagger.hilt.android.AndroidEntryPoint
 import tkamul.ae.mdmcontrollers.contollers.EventExecutorController
-import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.Args
-import tkamul.ae.mdmcontrollers.data.gateways.socketModels.sendingObject.DeviceInfo2SocketPayload
-import tkamul.ae.mdmcontrollers.data.gateways.socketgateway.SocketEventListener
+import tkamul.ae.mdmcontrollers.data.gateways.socketgateway.socketRemoteModels.sendingObject.Args
+import tkamul.ae.mdmcontrollers.data.gateways.socketgateway.socketRemoteModels.sendingObject.DeviceInfo2SocketPayload
+import tkamul.ae.mdmcontrollers.data.gateways.socketgateway.SocketEventCallbacks
 import tkamul.ae.mdmcontrollers.domain.core.Config
 import tkamul.ae.mdmcontrollers.domain.core.extentionFunction.toArgsResponse
 import tkamul.ae.mdmcontrollers.domain.entities.MDMInfo
-import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.MDMInfoUseCase
-import tkamul.ae.mdmcontrollers.domain.useCases.remote.MDMSocketChannelUseCase
+import tkamul.ae.mdmcontrollers.domain.interactors.remote.SocketRepo
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -22,7 +20,7 @@ class MDMService : Service()  , MDMServiceEventInterface {
     private var allowRebind: Boolean = true   // indicates whether onRebind should be used
 
     @Inject
-    lateinit var mdmSocketChannelUseCase: MDMSocketChannelUseCase
+    lateinit var socketInteractor: SocketRepo
 
     @Inject
     lateinit var eventExecutorController: EventExecutorController
@@ -48,7 +46,7 @@ class MDMService : Service()  , MDMServiceEventInterface {
 
     @Throws(Exception::class)
     private fun startListingOnSocketEvents(info: MDMInfo) {
-        mdmSocketChannelUseCase.observe(info.deviceInfo.serial_number , object : SocketEventListener {
+        socketInteractor.observe(info.deviceInfo.serial_number , object : SocketEventCallbacks {
             override fun onConnect(args: Any) {
                 sendDeviceInfo()
                 showNotification(Config.SericeNotification.MDM_NOTIFICATION_RUNNING_BODY)
@@ -65,7 +63,7 @@ class MDMService : Service()  , MDMServiceEventInterface {
     private fun sendDeviceInfo() {
         kotlin.runCatching {
             eventExecutorController.invokeMDMInfo {
-                mdmSocketChannelUseCase.send(DeviceInfo2SocketPayload(
+                socketInteractor.send(DeviceInfo2SocketPayload(
                     args = Args("onConnect"),
                     device = it,
                     event = Config.Events.SET_DEVICE_INFO_EVENT
@@ -94,6 +92,7 @@ class MDMService : Service()  , MDMServiceEventInterface {
 
     override fun onDestroy() {
         // The service is no longer used and is being destroyed
+        socketInteractor.disconnect()
        showNotification(Config.SericeNotification.MDM_NOTIFICATION_STOPED_BODY)
     }
 
@@ -113,7 +112,7 @@ class MDMService : Service()  , MDMServiceEventInterface {
           kotlin.runCatching {
               eventExecutorController.invokeMDMInfo {
                   it.executedEvent = eventId
-                  mdmSocketChannelUseCase.send(DeviceInfo2SocketPayload(
+                  socketInteractor.send(DeviceInfo2SocketPayload(
                       args = Args(rayId),
                       device = it,
                       event = Config.Events.SET_DEVICE_INFO_EVENT
@@ -124,6 +123,4 @@ class MDMService : Service()  , MDMServiceEventInterface {
           }
       }
     }
-
-
 }

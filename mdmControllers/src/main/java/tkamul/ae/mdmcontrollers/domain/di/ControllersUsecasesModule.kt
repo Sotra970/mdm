@@ -6,11 +6,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.PrintUseCase
-import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.*
-import tkamul.ae.mdmcontrollers.domain.core.KeyStoreUtils
-import tkamul.ae.mdmcontrollers.domain.useCases.CSUseCases.InstallApkUsecase
-import tkamul.ae.mdmcontrollers.domain.useCases.remote.ExecuteCommandUseCase
+import tkamul.ae.mdmcontrollers.domain.interactors.printer.PrintInteractor
+import tkamul.ae.mdmcontrollers.domain.interactors.CSUseCases.*
+import tkamul.ae.mdmcontrollers.domain.interactors.CSUseCases.InstallApkInteractor
+import tkamul.ae.mdmcontrollers.domain.interactors.broadcasting.ExecuteCommandInteractor
 import tkamul.ae.mdmcontrollers.service.MobiMediaTechServiceUtil
 import javax.inject.Singleton
 
@@ -22,36 +21,36 @@ import javax.inject.Singleton
 class ControllersUsecasesModule {
 
     @Provides
-    fun provideExecuteCommandUseCaseController(@ApplicationContext context:Context): ExecuteCommandUseCase {
-        return ExecuteCommandUseCase(context)
+    fun provideExecuteCommandUseCaseController(@ApplicationContext context:Context): ExecuteCommandInteractor {
+        return ExecuteCommandInteractor(context)
     }
 
     @Provides
-    fun providePrintController(@ApplicationContext context:Context): PrintUseCase {
-        return PrintUseCase(context)
+    fun providePrintController(@ApplicationContext context:Context): PrintInteractor {
+        return PrintInteractor(context)
     }
 
     @Provides
     fun provideUnInstallApkUseCase(
             mobiMediaTechServiceUtil: MobiMediaTechServiceUtil
-    ): UnInstallApkUsecase {
-        return UnInstallApkUsecase(mobiMediaTechServiceUtil)
+    ): UnInstallApkInteractor {
+        return UnInstallApkInteractor(mobiMediaTechServiceUtil)
     }
 
     @Provides
     fun provideInstallApkUseCase(
             @ApplicationContext appContext: Context ,
             mobiMediaTechServiceUtil: MobiMediaTechServiceUtil
-    ): InstallApkUsecase {
-        return InstallApkUsecase(appContext,mobiMediaTechServiceUtil)
+    ): InstallApkInteractor {
+        return InstallApkInteractor(appContext,mobiMediaTechServiceUtil)
     }
 
     @Provides
     @Singleton
     fun provideMobileDataController(
         mobiMediaTechServiceUtil: MobiMediaTechServiceUtil
-    ): MobileDataUseCase {
-        return MobileDataUseCase(
+    ): MobileDataInteractor {
+        return MobileDataInteractor(
             mobiMediaTechServiceUtil
         )
     }
@@ -73,8 +72,8 @@ class ControllersUsecasesModule {
     @Singleton
     fun provideShutdownController(
         mobiMediaTechServiceUtil: MobiMediaTechServiceUtil
-    ): ShutdownUseCase {
-        return ShutdownUseCase(
+    ): ShutdownInteractor {
+        return ShutdownInteractor(
             mobiMediaTechServiceUtil
         )
     }
@@ -83,8 +82,8 @@ class ControllersUsecasesModule {
     @Singleton
     fun provideRebootController(
         mobiMediaTechServiceUtil: MobiMediaTechServiceUtil
-    ): RebootUseCase {
-        return RebootUseCase(
+    ): RebootInteractor {
+        return RebootInteractor(
             mobiMediaTechServiceUtil
         )
     }
@@ -95,8 +94,8 @@ class ControllersUsecasesModule {
     fun provideNFCController(
         @ApplicationContext appContext: Context ,
         mobiMediaTechServiceUtil: MobiMediaTechServiceUtil
-    ): NFCUseCase {
-        return NFCUseCase(
+    ): NFCInteractor {
+        return NFCInteractor(
             mobiMediaTechServiceUtil,
             appContext
         )
@@ -105,13 +104,13 @@ class ControllersUsecasesModule {
     @Provides
     @Singleton
     fun provideMDMInfoController(
-        @ApplicationContext appContext: Context ,
-        mobiMediaTechServiceUtil: MobiMediaTechServiceUtil,
-        printUseCase: PrintUseCase
-    ): MDMInfoUseCase {
-        return MDMInfoUseCase(
+            @ApplicationContext appContext: Context,
+            mobiMediaTechServiceUtil: MobiMediaTechServiceUtil,
+            printInteractor: PrintInteractor
+    ): MDMInfoInteractor {
+        return MDMInfoInteractor(
             mobiMediaTechServiceUtil,
-            printUseCase,
+            printInteractor,
             appContext
         )
     }
@@ -121,8 +120,8 @@ class ControllersUsecasesModule {
     fun provideLocationController(
         @ApplicationContext appContext: Context ,
         mobiMediaTechServiceUtil: MobiMediaTechServiceUtil
-    ): LocationUseCase {
-        return LocationUseCase(
+    ): LocationInteractor {
+        return LocationInteractor(
             mobiMediaTechServiceUtil,
             appContext
         )
@@ -134,8 +133,8 @@ class ControllersUsecasesModule {
     fun provideBluetoothController(
         @ApplicationContext appContext: Context ,
         mobiMediaTechServiceUtil: MobiMediaTechServiceUtil
-    ): BluetoothUseCase {
-        return BluetoothUseCase(
+    ): BluetoothInteractor {
+        return BluetoothInteractor(
             mobiMediaTechServiceUtil,
             appContext
         )
@@ -143,8 +142,8 @@ class ControllersUsecasesModule {
 
     @Provides
     @Singleton
-    fun provideWifiController(mobiMediaTechServiceUtil: MobiMediaTechServiceUtil): WifiUseCase {
-        return WifiUseCase(
+    fun provideWifiController(mobiMediaTechServiceUtil: MobiMediaTechServiceUtil): WifiInteractor {
+        return WifiInteractor(
             mobiMediaTechServiceUtil
         )
     }
