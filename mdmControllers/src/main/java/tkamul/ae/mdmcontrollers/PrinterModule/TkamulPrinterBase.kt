@@ -189,11 +189,16 @@ abstract class TkamulPrinterBase {
         // log printed lines
         Logger.logd("PrinterLines : $logLines")
         // clear queue
+        clear()
+        // return last printed line status
+        return@async lastPrintedLineStatus
+    }
+
+    private fun clear() = coroutineScope.launch(Dispatchers.Main){
+        // clear queue
         printQueue.clear()
         // ending printer to save voltage
         endingPrinterChild()
-        // return last printed line status
-        return@async lastPrintedLineStatus
     }
 
 
