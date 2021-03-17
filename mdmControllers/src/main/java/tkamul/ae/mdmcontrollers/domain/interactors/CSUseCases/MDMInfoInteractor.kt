@@ -77,7 +77,7 @@ class MDMInfoInteractor @Inject constructor(
                     dataStatus = it.dataStatus,
                     bluetoothStatus = BluetoothUtil.getBluetoothAdapterState(context),
                     printerStatus = printerController.getPrinterStats(),
-                    installedPackages = it.packageList.toPackageInfoList()
+                    installedPackages = listOf()//it.packageList.toPackageInfoList()
                 )
             )
         })

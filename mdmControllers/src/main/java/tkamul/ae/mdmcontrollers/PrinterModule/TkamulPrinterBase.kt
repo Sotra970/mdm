@@ -25,8 +25,7 @@ import java.util.*
  */
 abstract class TkamulPrinterBase {
 
-    private val parentJob = Job()
-    private val coroutineScope = CoroutineScope(Dispatchers.Main + parentJob)
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     private var printQueue: Queue<TkamulPrintingData> = ArrayDeque()
     private  var  isSeparateTextToLinesEnabled = false
@@ -206,8 +205,8 @@ abstract class TkamulPrinterBase {
      * method to print on paper to print text or image
      * @return  LinePrintingStatus obj
      */
-    @UiThread
-    private suspend fun printTkamulPrintingDataOnPaper(tkamulPrintingData: TkamulPrintingData, logLines :StringBuilder) : Deferred<LinePrintingStatus> = coroutineScope.async(Dispatchers.Main){
+    private suspend fun printTkamulPrintingDataOnPaper(tkamulPrintingData: TkamulPrintingData, logLines :StringBuilder) : Deferred<LinePrintingStatus> =
+            coroutineScope.async(Dispatchers.Main){
         var linePrintingStatus = LinePrintingStatus()
         when(tkamulPrintingData){
             // printing text

@@ -21,7 +21,7 @@ class BluetoothInteractor @Inject constructor(
         if (Build.VERSION.SDK_INT == 29) {
             invokeAndroidQSenario(enable , onFinish)
         } else{
-            invokeNotMObieSenario(enable , onFinish)
+            invokeRestAndroidApiLevelSenario(enable , onFinish)
         }
     }
 

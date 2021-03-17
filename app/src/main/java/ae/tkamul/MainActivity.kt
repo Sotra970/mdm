@@ -202,7 +202,7 @@ class MainActivity : AppCompatActivity() {
             .addAsterisksLine()
             .addDashLine()
             // testing ;oream
-            .addText(loremX500+loremX500+loremX500+loremX500)
+            .addText(loremX500)
             // ending test
             .addDashLine()
             .addAsterisksLine()

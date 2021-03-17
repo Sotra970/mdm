@@ -43,7 +43,6 @@
                 <action android:name="tkamul.ae.mdmcontrollers.service.MDMService.MDMService"/>
             </intent-filter>
         </service>
-
     </application>
 
 </manifest>
