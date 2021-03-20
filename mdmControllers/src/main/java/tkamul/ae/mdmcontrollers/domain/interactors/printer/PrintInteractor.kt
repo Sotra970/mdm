@@ -1,9 +1,11 @@
 package tkamul.ae.mdmcontrollers.domain.interactors.printer
 
 import android.content.Context
+import android.os.Build
 import tkamul.ae.mdmcontrollers.PrinterModule.TkamulPrinterFactory
 import tkamul.ae.mdmcontrollers.PrinterModule.models.config.DevicePrinterStatus
 import tkamul.ae.mdmcontrollers.PrinterModule.models.config.LinePrintingStatus
+import tkamul.ae.mdmcontrollers.domain.core.Config
 import java.lang.RuntimeException
 import javax.inject.Inject
 
@@ -20,6 +22,7 @@ class PrintInteractor @Inject constructor(
     @Throws(RuntimeException::class)
      fun invoke(text : String , resultCallback : (LinePrintingStatus)->Unit){
         TkamulPrinterFactory.getTkamulPrinter(context)
+            .setSeparateTextToLines( Build.MODEL==Config.MP4P_MODEL_NAME , 100)
             .addEmptyLine()
             .addEmptyLine()
             .addEmptyLine()
