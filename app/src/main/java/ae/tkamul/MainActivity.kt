@@ -193,7 +193,7 @@ class MainActivity : AppCompatActivity() {
                 "Pellentesque feugiat justo nulla, sit amet gravida arcu rhoncus a. Proin pretium ex elit, id auctor massa cursus ut. In pulvinar felis ac leo venenatis, hendrerit mattis risus fringilla. Praesent eget felis eu orci mollis gravida. Cras vitae iaculis magna. Phasellus ut nisl eleifend eros sodales semper ac vitae justo."
         kotlin.runCatching {
         TkamulPrinterFactory.getTkamulPrinter(this)
-            .separateTextToLines(false)
+            .setSeparateTextToLines( Build.MODEL==Config.MP4P_MODEL_NAME , 50)
             .addDashLine()
             .addAsterisksLine()
             .addDashLine()
@@ -202,7 +202,7 @@ class MainActivity : AppCompatActivity() {
             .addAsterisksLine()
             .addDashLine()
             // testing ;oream
-            .addText(loremX500+loremX500+loremX500+loremX500)
+            .addText(loremX500)
             // ending test
             .addDashLine()
             .addAsterisksLine()
@@ -212,13 +212,14 @@ class MainActivity : AppCompatActivity() {
             .addAsterisksLine()
             .addDashLine()
             .printOnPaper{
-                connection.text = it.toString()
+                connection.text = connection.text.toString() +"\n" + it.toString()
             }
 //        controller test
-        internalEventExecutorController.invokeInternalPrintingProcess(event = Config.Events.PRINT_EVENT, printText = "controller test")
+       /* internalEventExecutorController.invokeInternalPrintingProcess(
+                event = Config.Events.PRINT_EVENT, printText = "controller test")
         }.onFailure {
             connection.text = "print : $it"
-        }
+        }*/
 
     }
     /*fun print(view: View) {

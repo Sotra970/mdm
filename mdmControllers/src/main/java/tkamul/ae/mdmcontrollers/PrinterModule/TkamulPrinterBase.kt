@@ -29,7 +29,7 @@ abstract class TkamulPrinterBase {
     private val coroutineScope = CoroutineScope(Dispatchers.Main + parentJob)
 
     private var printQueue: Queue<TkamulPrintingData> = ArrayDeque()
-    private  var  isSeparateTextToLinesEnabled = false
+    private  var  isSeparateTextToLinesEnabled = true
     private  var  combineLineCount = 100
     /**
      * setup child printer
@@ -167,39 +167,46 @@ abstract class TkamulPrinterBase {
     private  var retryCount = 0
     @Throws(RuntimeException::class)
      fun printOnPaper(result : (LinePrintingStatus)->Unit){
+        var disconnectShouldWait = false
         // printing service have leaks on mp4+ so you have to wail binding service and dismiss you outgoing job when service disconnected
         var printingJob : Job? = null
         setup({
-                printingJob = coroutineScope.launch(Dispatchers.Main){
+                printingJob = coroutineScope.async(Dispatchers.Main){
                     // printing service is ready now
                     val printerStatus = getPrinterStatus()
                     if (printerStatus.isReady){
                         // print and return last printed line status
                          result(processQueue().await())
                     }else{
-                       while (printerStatus.status!=null && printerStatus.status!!.contains("unknown") && retryCount < 4 ){
+                       if (printerStatus.status!=null && printerStatus.status!!.contains("unknown",true) && retryCount < 4 ){
+                           disconnectShouldWait = true
                            retryCount+=1
+                           //bnhet el tab3a
+                           endingPrinterChild()
+                           delay(11*1000)
                            // recall this function and return
                            printOnPaper(result)
-                           return@launch
+                       }else{
+                           // printer not ready and ether out of voltage or out of paper or both of them
+                           // clear our queue
+                           printQueue.clear()
+                           retryCount=0
+                           // retun error to function consumer
+                           result(LinePrintingStatus().apply {
+                               errorMessage = getPrinterStatus().status
+                           })
                        }
-                        // printer not ready and ether out of voltage or out of paper or both of them
-                        // clear our queue
-                        printQueue.clear()
-                        // retun error to function consumer
-                        result(LinePrintingStatus().apply {
-                            errorMessage = getPrinterStatus().status
-                        })
                     }
                 }
               },{
-                // dismiss outgoing printing job
+               if (!disconnectShouldWait){
+                   // dismiss outgoing printing job
                 printingJob?.cancel()
-                //clear our queue
-                printQueue.clear()
-                result(LinePrintingStatus().apply {
-                    errorMessage = "service is not ready , contact support "
-                })
+                   //clear our queue
+                   result(LinePrintingStatus().apply {
+                       errorMessage = "service is not ready , contact support "
+                   })
+               }
         })
     }
     // loop on queue

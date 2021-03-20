@@ -18,8 +18,9 @@ class MobiWireTkamulPrinter : TkamulPrinterBase() {
     /**
      *  {@inheritDoc}
      */
-    override fun setup() {
+    override fun setup(onReady:()->Unit , onError:()->Unit) {
         mobiWirePrinter = Printer.getInstance()
+        onReady()
     }
 
     override fun PrintTextOnPaper(tkamulPrinterTextModel: TkamulPrinterTextModel) : LinePrintingStatus{

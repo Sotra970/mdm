@@ -22,7 +22,7 @@ import tkamul.ae.mdmcontrollers.domain.core.Logger
  */
 class CSTkamulPrinter(val context: Context) : TkamulPrinterBase() {
 
-    private val setup: Boolean = false
+    private var setup: Boolean = false
 
     /**
      *  invoke onReady() when  PrinterServiceUtil launched and ready to use
@@ -34,6 +34,7 @@ class CSTkamulPrinter(val context: Context) : TkamulPrinterBase() {
                 override fun onServiceDisconnected(name: ComponentName) {
                     Log.e("PrinterServiceUtil", "aidl connect fail")
                     PrinterServiceUtil.atService = null
+                    setup = false
                     onError()
                 }
 
