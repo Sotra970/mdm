@@ -16,19 +16,23 @@ object LineUtils {
         return line 
     }
 
-    fun  convertTextToLine(text: String, maxCharCountInLine: Int): MutableList<String> {
+    fun  convertTextToLine(textToConvert: String, maxCharCountInLine: Int): MutableList<String> {
         val lineList = mutableListOf<String>()
-        if (text.length > maxCharCountInLine) {
+        if (textToConvert.length > maxCharCountInLine) {
+            // new line starting index ( last separated text end index)
             var startIndex = 0
-            while (startIndex < text.length) {
+            // while text still have more
+            while (startIndex < textToConvert.length) {
+                // let endIndex = last separated text end index + maxCharCountInLine
                 var endIndex = startIndex + maxCharCountInLine
-                endIndex = if (endIndex > text.length) text.length else endIndex
-                val temp_line = text.substring(startIndex, endIndex)
-                lineList.add(temp_line)
+                // make sure that end index to greater than textToConvert length
+                endIndex = if (endIndex > textToConvert.length) textToConvert.length else endIndex
+                lineList.add(textToConvert.substring(startIndex, endIndex))
+                // to get next line : make new line starting index = previous line end index
                 startIndex = endIndex
             }
         } else {
-           lineList.add(text)
+           lineList.add(textToConvert)
         }
         return lineList
     }

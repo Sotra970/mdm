@@ -1,8 +1,13 @@
 package tkamul.ae.mdmcontrollers.PrinterModule
 
+import android.content.ComponentName
 import android.content.Context
+import android.content.ServiceConnection
+import android.os.IBinder
+import android.util.Log
 import com.mobiiot.androidqapi.api.CsPrinter
 import com.mobiiot.androidqapi.api.Utils.PrinterServiceUtil
+import com.sagereal.printer.PrinterInterface
 import tkamul.ae.mdmcontrollers.PrinterModule.models.config.DevicePrinterStatus
 import tkamul.ae.mdmcontrollers.PrinterModule.models.config.LinePrintingStatus
 import tkamul.ae.mdmcontrollers.PrinterModule.models.data.TkamulPrinterImageModel
@@ -15,16 +20,32 @@ import tkamul.ae.mdmcontrollers.domain.core.Logger
 /**
  * Created by sotra@altakamul.tr on 3/2/2021.
  */
-class CSTkamulPrinter( val context: Context) : TkamulPrinterBase() {
+class CSTkamulPrinter(val context: Context) : TkamulPrinterBase() {
 
     private val setup: Boolean = false
 
     /**
-     *  {@inheritDoc}
+     *  invoke onReady() when  PrinterServiceUtil launched and ready to use
+     *  invoke onReady() when  PrinterServiceUtil have leak
      */
-    override fun setup() {
-        if (!setup)
-        PrinterServiceUtil.bindService(context)
+    override fun setup(onReady:()->Unit , onError:()->Unit) {
+        if (!setup){
+            val serviceConnection: ServiceConnection = object : ServiceConnection {
+                override fun onServiceDisconnected(name: ComponentName) {
+                    Log.e("PrinterServiceUtil", "aidl connect fail")
+                    PrinterServiceUtil.atService = null
+                    onError()
+                }
+
+                override fun onServiceConnected(name: ComponentName, service: IBinder) {
+                    Log.e("PrinterServiceUtil", "aidl connect success")
+                    PrinterServiceUtil.atService = PrinterInterface.Stub.asInterface(service)
+                    onReady()
+                }
+            }
+            context.bindService(PrinterServiceUtil.getPrintIntent(), serviceConnection,  Context.BIND_AUTO_CREATE)
+        }
+
     }
 
     /**
@@ -36,19 +57,18 @@ class CSTkamulPrinter( val context: Context) : TkamulPrinterBase() {
      *
      */
     override fun getPrinterStatus(): DevicePrinterStatus {
-        setup()
         val printerStatus = CsPrinter.getPrinterStatus()
         Logger.logd("printerStatus $printerStatus")
         if (printerStatus == 1){
-            return DevicePrinterStatus("Ready" , true)
+            return DevicePrinterStatus("Ready", true)
         } else if (printerStatus ==0){
-            return DevicePrinterStatus("Pinter is out of Papers, Please insert new Paper Roll" , false)
+            return DevicePrinterStatus("Pinter is out of Papers, Please insert new Paper Roll", false)
         } else if (printerStatus ==16){
-            return DevicePrinterStatus("Printer is  out of Paper and The device need to shutdown to cool down the printer " , false)
+            return DevicePrinterStatus("Printer is  out of Paper and The device need to shutdown to cool down the printer ", false)
         } else if (printerStatus ==17){
-            return DevicePrinterStatus("The device need to shutdown to cool down the printer" , false)
+            return DevicePrinterStatus("The device need to shutdown to cool down the printer", false)
         } else {
-            return DevicePrinterStatus("The printer status is unknown, please contact support" , false)
+            return DevicePrinterStatus("The printer status is unknown, please contact support", false)
         }
     }
 
@@ -81,11 +101,11 @@ class CSTkamulPrinter( val context: Context) : TkamulPrinterBase() {
      */
     override fun PrintTextOnPaper(tkamulPrinterTextModel: TkamulPrinterTextModel) :LinePrintingStatus{
          CsPrinter.printText_FullParam(
-            tkamulPrinterTextModel.text ,
-            getTextSize(tkamulPrinterTextModel.scale),
-            getTextDiriction(tkamulPrinterTextModel.dirction),
-            1, getTexAlign(tkamulPrinterTextModel.align), false, false
-        )
+                 tkamulPrinterTextModel.text,
+                 getTextSize(tkamulPrinterTextModel.scale),
+                 getTextDiriction(tkamulPrinterTextModel.dirction),
+                 1, getTexAlign(tkamulPrinterTextModel.align), false, false
+         )
         return getLinePrintingStatus()
     }
 
@@ -148,15 +168,15 @@ class CSTkamulPrinter( val context: Context) : TkamulPrinterBase() {
          * 4  : Printing queue full
          * 10 : Unknown error
          */
-        public fun getLinePrintingStatus(lastError:Int = CsPrinter.getLastError()) :LinePrintingStatus{
+        public fun getLinePrintingStatus(lastError: Int = CsPrinter.getLastError()) :LinePrintingStatus{
             return when(lastError){
-                0->LinePrintingStatus(true , null)
-                1->LinePrintingStatus(false , "No Paper")
-                2->LinePrintingStatus(false, "Overheat")
-                3->LinePrintingStatus(false, "Invalid printing data")
-                4->LinePrintingStatus(false, "Printing queue full")
-                10->LinePrintingStatus(false , "Unknown error")
-                else ->LinePrintingStatus(false , "Unknown error")
+                0 -> LinePrintingStatus(true, null)
+                1 -> LinePrintingStatus(false, "No Paper")
+                2 -> LinePrintingStatus(false, "Overheat")
+                3 -> LinePrintingStatus(false, "Invalid printing data")
+                4 -> LinePrintingStatus(false, "Printing queue full")
+                10 -> LinePrintingStatus(false, "Unknown error")
+                else ->LinePrintingStatus(false, "Unknown error")
             }
         }
 

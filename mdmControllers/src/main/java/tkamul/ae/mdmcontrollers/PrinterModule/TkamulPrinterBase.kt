@@ -30,10 +30,11 @@ abstract class TkamulPrinterBase {
 
     private var printQueue: Queue<TkamulPrintingData> = ArrayDeque()
     private  var  isSeparateTextToLinesEnabled = false
+    private  var  combineLineCount = 100
     /**
      * setup child printer
      */
-    protected abstract fun setup()
+    protected abstract fun setup(onReady:()->Unit , onError:()->Unit)
 
     /**
      * get printer child status before printing
@@ -63,10 +64,21 @@ abstract class TkamulPrinterBase {
     protected abstract fun endingPrinterChild()
 
     /**
-     *  disable / enable text separation to lines
+     *  enable text separation to lines and set combineLineCount value
      */
-    fun separateTextToLines( enabled : Boolean) : TkamulPrinterBase {
-        isSeparateTextToLinesEnabled = enabled
+    fun setSeparateTextToLines(enable : Boolean , combineLineCount:Int = 100) : TkamulPrinterBase {
+        isSeparateTextToLinesEnabled = enable
+        this.combineLineCount = combineLineCount
+        return this
+    }
+    fun enableSeparateTextToLines(combineLineCount : Int) : TkamulPrinterBase {
+        isSeparateTextToLinesEnabled = true
+        this.combineLineCount = combineLineCount
+        return this
+    }
+    fun disableSeparateTextToLines() : TkamulPrinterBase {
+        isSeparateTextToLinesEnabled = false
+        this.combineLineCount = 1
         return this
     }
     /**
@@ -77,7 +89,8 @@ abstract class TkamulPrinterBase {
      */
     fun  addText(text: String, scale: PrinterTextScale = PrinterTextScale.normal, align: PrintTextAlign = PrintTextAlign.LEFT, diriction: PrintTextDirction = PrintTextDirction.LTR):TkamulPrinterBase{
         if (isSeparateTextToLinesEnabled){
-            for ( child in LineUtils.convertTextToLine(text,getMaxCharCountInLine())){
+            val lineList = LineUtils.convertTextToLine(text,getMaxCharCountInLine()*combineLineCount)
+            for ( child in lineList ){
                 printQueue.add(TkamulPrinterTextModel().apply {
                     this.scale = scale
                     this.dirction = diriction
@@ -151,21 +164,43 @@ abstract class TkamulPrinterBase {
      * print queue on paper or throw runtime error
      * @return last printed line status
      */
+    private  var retryCount = 0
     @Throws(RuntimeException::class)
      fun printOnPaper(result : (LinePrintingStatus)->Unit){
-       coroutineScope.launch(Dispatchers.Main){
-            setup()
-            if (getPrinterStatus().isReady){
-                // print and return last printed line status
-                 result(processQueue().await())
-            }else{
+        // printing service have leaks on mp4+ so you have to wail binding service and dismiss you outgoing job when service disconnected
+        var printingJob : Job? = null
+        setup({
+                printingJob = coroutineScope.launch(Dispatchers.Main){
+                    // printing service is ready now
+                    val printerStatus = getPrinterStatus()
+                    if (printerStatus.isReady){
+                        // print and return last printed line status
+                         result(processQueue().await())
+                    }else{
+                       while (printerStatus.status!=null && printerStatus.status!!.contains("unknown") && retryCount < 4 ){
+                           retryCount+=1
+                           // recall this function and return
+                           printOnPaper(result)
+                           return@launch
+                       }
+                        // printer not ready and ether out of voltage or out of paper or both of them
+                        // clear our queue
+                        printQueue.clear()
+                        // retun error to function consumer
+                        result(LinePrintingStatus().apply {
+                            errorMessage = getPrinterStatus().status
+                        })
+                    }
+                }
+              },{
+                // dismiss outgoing printing job
+                printingJob?.cancel()
+                //clear our queue
                 printQueue.clear()
-                // printer have an issue(out of paper or temperature ) before printing
-              result(LinePrintingStatus().apply {
-                    errorMessage = getPrinterStatus().status
+                result(LinePrintingStatus().apply {
+                    errorMessage = "service is not ready , contact support "
                 })
-            }
-        }
+        })
     }
     // loop on queue
     // call responsible method to print on paper to print text or image  :  printTkamulPrintingDataOnPaper()
@@ -189,12 +224,12 @@ abstract class TkamulPrinterBase {
         // log printed lines
         Logger.logd("PrinterLines : $logLines")
         // clear queue
-        clear()
+        clearAndFinish()
         // return last printed line status
         return@async lastPrintedLineStatus
     }
 
-    private fun clear() = coroutineScope.launch(Dispatchers.Main){
+    private fun clearAndFinish() = coroutineScope.launch(Dispatchers.Main){
         // clear queue
         printQueue.clear()
         // ending printer to save voltage
