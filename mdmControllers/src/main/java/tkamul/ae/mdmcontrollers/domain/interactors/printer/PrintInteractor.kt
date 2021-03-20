@@ -2,9 +2,9 @@ package tkamul.ae.mdmcontrollers.domain.interactors.printer
 
 import android.content.Context
 import android.os.Build
-import tkamul.ae.mdmcontrollers.PrinterModule.TkamulPrinterFactory
-import tkamul.ae.mdmcontrollers.PrinterModule.models.config.DevicePrinterStatus
-import tkamul.ae.mdmcontrollers.PrinterModule.models.config.LinePrintingStatus
+import tkamul.ae.printer_factory.TkamulPrinterFactory
+import tkamul.ae.printer_factory.models.config.DevicePrinterStatus
+import tkamul.ae.printer_factory.models.config.LinePrintingStatus
 import tkamul.ae.mdmcontrollers.domain.core.Config
 import java.lang.RuntimeException
 import javax.inject.Inject
@@ -20,8 +20,8 @@ class PrintInteractor @Inject constructor(
      * return printing status
      */
     @Throws(RuntimeException::class)
-     fun invoke(text : String , resultCallback : (LinePrintingStatus)->Unit){
-        TkamulPrinterFactory.getTkamulPrinter(context)
+     fun invoke(text : String , resultCallback : (tkamul.ae.printer_factory.models.config.LinePrintingStatus)->Unit){
+        tkamul.ae.printer_factory.TkamulPrinterFactory.getTkamulPrinter(context)
             .setSeparateTextToLines( Build.MODEL== Config.MP4P_MODEL_NAME , 100)
             .addEmptyLine()
             .addEmptyLine()
@@ -33,7 +33,7 @@ class PrintInteractor @Inject constructor(
             .printOnPaper(resultCallback)
     }
     @Throws(RuntimeException::class)
-    fun  getPrinterStats(): DevicePrinterStatus {
-        return TkamulPrinterFactory.getTkamulPrinter(context).getPrinterStatus()
+    fun  getPrinterStats(): tkamul.ae.printer_factory.models.config.DevicePrinterStatus {
+        return tkamul.ae.printer_factory.TkamulPrinterFactory.getTkamulPrinter(context).getPrinterStatus()
     }
 }

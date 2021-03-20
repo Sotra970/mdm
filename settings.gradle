@@ -1,3 +1,4 @@
+include ':printer-factory'
 include ':MDMRemoteService'
 include ':MDMServiceBinder'
 include ':mdmControllers'

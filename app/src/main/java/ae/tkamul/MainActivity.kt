@@ -7,7 +7,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
-import tkamul.ae.mdmcontrollers.PrinterModule.TkamulPrinterFactory
+import tkamul.ae.printer_factory.TkamulPrinterFactory
 import tkamul.ae.mdmcontrollers.contollers.InternalEventExecutor
 import tkamul.ae.mdmcontrollers.domain.core.Config
 import tkamul.ae.mdmcontrollers.domain.interactors.CSUseCases.MDMInfoInteractor
@@ -214,13 +214,9 @@ class MainActivity : AppCompatActivity() {
             .printOnPaper{
                 connection.text = connection.text.toString() +"\n" + it.toString()
             }
-//        controller test
-       /* internalEventExecutorController.invokeInternalPrintingProcess(
-                event = Config.Events.PRINT_EVENT, printText = "controller test")
         }.onFailure {
             connection.text = "print : $it"
-        }*/
-
+        }
     }
     /*fun print(view: View) {
         // print module test
@@ -273,7 +269,6 @@ class MainActivity : AppCompatActivity() {
             .printOnPaper()
 //        controller test
         internalEventExecutorController.invokeInternalPrintingProcess(event = Config.Events.PRINT_EVENT, printText = "controller test")
-
     }*/
 }
 

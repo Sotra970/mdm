@@ -1,6 +1,6 @@
 package tkamul.ae.mdmcontrollers.contollers
 
-import tkamul.ae.mdmcontrollers.PrinterModule.models.config.LinePrintingStatus
+import tkamul.ae.printer_factory.models.config.LinePrintingStatus
 import tkamul.ae.mdmcontrollers.data.gateways.socketgateway.socketRemoteModels.argsResponse.NameValuePairs
 import tkamul.ae.mdmcontrollers.data.gateways.socketgateway.socketRemoteModels.sendingObject.Args
 import tkamul.ae.mdmcontrollers.data.gateways.socketgateway.socketRemoteModels.sendingObject.DeviceInfo2SocketPayload
@@ -74,7 +74,7 @@ class SendInfoController @Inject constructor(
     /**
      * function to send  controls status + device info + print status  to responsible Socket channel
      */
-    fun setPrintStatusToSocket(pairs: NameValuePairs, lastLineStatus: LinePrintingStatus) {
+    fun setPrintStatusToSocket(pairs: NameValuePairs, lastLineStatus: tkamul.ae.printer_factory.models.config.LinePrintingStatus) {
             mdmInfoController.invoke {
                 it.apply {
                     this.lastLineStatus = lastLineStatus
