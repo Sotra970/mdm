@@ -192,9 +192,10 @@ class MainActivity : AppCompatActivity() {
                 "\n" +
                 "Pellentesque feugiat justo nulla, sit amet gravida arcu rhoncus a. Proin pretium ex elit, id auctor massa cursus ut. In pulvinar felis ac leo venenatis, hendrerit mattis risus fringilla. Praesent eget felis eu orci mollis gravida. Cras vitae iaculis magna. Phasellus ut nisl eleifend eros sodales semper ac vitae justo."
         kotlin.runCatching {
-        TkamulPrinterFactory.getTkamulPrinter(this)
+        val printer  = TkamulPrinterFactory.getTkamulPrinter(this)
             .setSeparateTextToLines( Build.MODEL==Config.MP4P_MODEL_NAME , 50)
-            .addDashLine()
+
+            printer.addDashLine()
             .addAsterisksLine()
             .addDashLine()
             .addText("start test")
