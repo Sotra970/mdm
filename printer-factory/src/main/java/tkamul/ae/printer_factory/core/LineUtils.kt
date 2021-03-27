@@ -35,8 +35,9 @@ object LineUtils {
            lineList.add(textToConvert)
         }
         return lineList
-    }
 
+    }
+    @JvmStatic
     fun getCenterdLine(text: String , maxCharCountInLine: Int): String {
         // if text more than line or equal then return same text
        val trimedText = text.trim()

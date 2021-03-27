@@ -24,12 +24,13 @@ class CSTkamulPrinter(val context: Context) : TkamulPrinterBase() {
 
     private var setup: Boolean = false
 
-    /**
+    /**0000
      *  invoke onReady() when  PrinterServiceUtil launched and ready to use
      *  invoke onReady() when  PrinterServiceUtil have leak
      */
     override fun setup(onReady:()->Unit , onError:()->Unit) {
         if (!setup){
+            setup = true
             val serviceConnection: ServiceConnection = object : ServiceConnection {
                 override fun onServiceDisconnected(name: ComponentName) {
                     Log.e("PrinterServiceUtil", "aidl connect fail")
@@ -46,8 +47,9 @@ class CSTkamulPrinter(val context: Context) : TkamulPrinterBase() {
                 }
             }
             context.bindService(PrinterServiceUtil.getPrintIntent(), serviceConnection,  Context.BIND_AUTO_CREATE)
+        }else {
+            onReady()
         }
-
     }
 
     /**
@@ -78,8 +80,12 @@ class CSTkamulPrinter(val context: Context) : TkamulPrinterBase() {
     /**
      *  {@inheritDoc}
      */
-    override fun getMaxCharCountInLine(): Int {
-       return MAX_CHAR_COUNT
+    override fun getMaxCharCountInLine(scale: PrinterTextScale): Int {
+        return when(scale){
+            PrinterTextScale.normal ->   MAX_CHAR_COUNT_SCALE_NORMAL
+            PrinterTextScale.medium ->   MAX_CHAR_COUNT_SCALE_MEDIUM
+            PrinterTextScale.large ->   MAX_CHAR_COUNT_SCALE_LARGE
+        }
     }
 
 
@@ -99,14 +105,14 @@ class CSTkamulPrinter(val context: Context) : TkamulPrinterBase() {
      * int(alignement of text)[1-3]
      * boolean(true for bold text, else false)
      * boolean(true for underline text, else false)
-     * TODO("make keys for text font , bold , underline)
+     * TODO("make keys for text font  , underline)
      */
     override fun PrintTextOnPaper(tkamulPrinterTextModel: TkamulPrinterTextModel) : LinePrintingStatus {
          CsPrinter.printText_FullParam(
                  tkamulPrinterTextModel.text,
                  getTextSize(tkamulPrinterTextModel.scale),
                  getTextDiriction(tkamulPrinterTextModel.dirction),
-                 1, getTexAlign(tkamulPrinterTextModel.align), false, false
+                 1, getTexAlign(tkamulPrinterTextModel.align), tkamulPrinterTextModel.isBold, false
          )
         return getLinePrintingStatus()
     }
@@ -152,10 +158,12 @@ class CSTkamulPrinter(val context: Context) : TkamulPrinterBase() {
     }
 
     companion object {
-        internal const val LARGE_TEXT = 3
-        internal const val MED_TEXT = 2
-        internal const val NORMAL_TEXT = 1
-        internal const val MAX_CHAR_COUNT: Int = 21
+        internal const val LARGE_TEXT = 2
+        internal const val MED_TEXT = 1
+        internal const val NORMAL_TEXT = 0
+        internal const val MAX_CHAR_COUNT_SCALE_LARGE: Int = 14
+        internal const val MAX_CHAR_COUNT_SCALE_MEDIUM: Int = 21
+        internal const val MAX_CHAR_COUNT_SCALE_NORMAL: Int = 42
         internal const val LTR: Int = 0
         internal const val RTL: Int = 1
         internal  const val ALIGN_LEFT = 0

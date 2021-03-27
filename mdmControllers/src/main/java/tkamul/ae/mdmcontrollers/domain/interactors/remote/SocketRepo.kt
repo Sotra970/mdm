@@ -22,7 +22,7 @@ class SocketRepo @Inject constructor(
     @Throws(Exception::class)
      fun  observe(serial : String, callbacks : SocketEventCallbacks){
         query= "serialNo=[${serial.replace(" " ,"")}]"
-        socket.observe(url ,   query, eventname, socketEventCallbacks = callbacks)
+        socket.observe(url = url ,  eventName = eventname , query =  query, socketEventCallbacks = callbacks)
     }
     /**
      * invoke from [MDMService]

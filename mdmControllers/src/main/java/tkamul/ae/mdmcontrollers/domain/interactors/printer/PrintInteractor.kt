@@ -29,7 +29,6 @@ class PrintInteractor @Inject constructor(
             .addText(text)
             .addEmptyLine()
             .addEmptyLine()
-            .addEmptyLine()
             .printOnPaper(resultCallback)
     }
     @Throws(RuntimeException::class)

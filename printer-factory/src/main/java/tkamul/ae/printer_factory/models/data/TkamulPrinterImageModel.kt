@@ -6,10 +6,12 @@ import android.graphics.Bitmap
  * Created by developers@appgain.io on 8/26/2018.
  */
 class TkamulPrinterImageModel : TkamulPrintingData {
-    var bitmap: Bitmap?
+
+
+    var bitmap:ByteArray?
     var path: String? = null
 
-    constructor(bitmap: Bitmap) {
+    constructor(bitmap: ByteArray) {
         this.bitmap = bitmap
         path = null
     }

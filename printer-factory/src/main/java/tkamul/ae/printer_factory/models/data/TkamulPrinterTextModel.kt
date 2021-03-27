@@ -11,5 +11,6 @@ class TkamulPrinterTextModel(
     var text: String = "",
     var scale: PrinterTextScale = PrinterTextScale.normal,
     var align: PrintTextAlign = PrintTextAlign.LEFT,
-    var dirction: PrintTextDirction = PrintTextDirction.LTR
+    var dirction: PrintTextDirction = PrintTextDirction.LTR ,
+    var isBold: Boolean = false
 ): TkamulPrintingData()

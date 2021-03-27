@@ -69,10 +69,10 @@ class MobiWireTkamulPrinter : TkamulPrinterBase() {
     override fun PrintImageOnPaper(tkamulPrinterImageModel: TkamulPrinterImageModel) : LinePrintingStatus {
         if (tkamulPrinterImageModel.path != null)
             mobiWirePrinter.printBitmap(tkamulPrinterImageModel.path)
-        else if (tkamulPrinterImageModel.bitmap != null)
-            mobiWirePrinter.printBitmap(
+//        else if (tkamulPrinterImageModel.bitmap != null)
+/*            mobiWirePrinter.printBitmap(
                 tkamulPrinterImageModel.bitmap
-        )
+        )*/
         return getLastLinePrintingStatus()
     }
 
@@ -112,7 +112,7 @@ class MobiWireTkamulPrinter : TkamulPrinterBase() {
     /**
      * @inheritDoc
      */
-    override fun getMaxCharCountInLine(): Int {
+    override fun getMaxCharCountInLine(scale: PrinterTextScale): Int {
         return  MAX_CHAR_COUNT
     }
 

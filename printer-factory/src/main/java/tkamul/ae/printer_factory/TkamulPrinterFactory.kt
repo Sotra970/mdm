@@ -17,6 +17,7 @@ import tkamul.ae.printer_factory.models.config.PrinterType
  */
 object TkamulPrinterFactory {
 
+    @JvmStatic
      fun getTkamulPrinter(context: Context): TkamulPrinterBase {
         return when(TkamulPrinterBase.getPrinterType()){
             PrinterType.MOBIEWIRE ->{

@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+       setContentView(R.layout.activity_main)
         // show serial to ui
         bindSerilaNumber()
         // say hi
@@ -192,8 +192,9 @@ class MainActivity : AppCompatActivity() {
                 "\n" +
                 "Pellentesque feugiat justo nulla, sit amet gravida arcu rhoncus a. Proin pretium ex elit, id auctor massa cursus ut. In pulvinar felis ac leo venenatis, hendrerit mattis risus fringilla. Praesent eget felis eu orci mollis gravida. Cras vitae iaculis magna. Phasellus ut nisl eleifend eros sodales semper ac vitae justo."
         kotlin.runCatching {
+
         TkamulPrinterFactory.getTkamulPrinter(this)
-            .setSeparateTextToLines( Build.MODEL==Config.MP4P_MODEL_NAME , 50)
+            .setSeparateTextToLines( Build.MODEL!=Config.MP3P_MODEL_NAME , 50)
             .addDashLine()
             .addAsterisksLine()
             .addDashLine()
