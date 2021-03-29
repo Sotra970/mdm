@@ -40,7 +40,7 @@ object Config {
     const val MP3P_MODEL_NAME =  "MP3_Plus"
     const val MP3_MODEL_NAME =  "MP3"
     const val MDM_SOCKET_CHANNEL: String = "message"
-    const val MDM_SOCKET_URL = "https://mdm-server-io.herokuapp.com"
+    const val MDM_SOCKET_URL = "http://mdmdemosocket.altkamul.net"
 
     object Events {
         const val REMOTE_COMMAND_RECEIVER ="REMOTE_COMMAND_RECEIVER"

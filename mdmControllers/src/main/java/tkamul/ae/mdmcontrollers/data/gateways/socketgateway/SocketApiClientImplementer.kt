@@ -18,15 +18,6 @@ class SocketApiClientImplementer : SocketApi {
 
     val tag = "socket-call"
 
-    /**
-     * Set eventListener.
-     *
-     * When server sends events to the socket, those events are passed to the
-     * RemoteDataSource -> Repository -> Presenter -> View using EventListener.
-     *
-     * @param eventListener
-     */
-
 
 
     /**
@@ -52,6 +43,7 @@ class SocketApiClientImplementer : SocketApi {
             newSocket.on(Socket.EVENT_CONNECT, onConnect(node))
             newSocket.on(Socket.EVENT_DISCONNECT, onDisconnect(node))
             newSocket.on(eventName, onNewMessage(node))
+            Logger.logd("start connection")
             newSocket.connect()
         }
     }
